@@ -18,7 +18,7 @@
   <nav>
   <div class="menu-toggle" onclick="toggleMenu()">☰</div>
   <ul id="navMenu">
-    <li><a href="index.html">🏠 Panel de Control</a></li>
+    <li><a href="index.html">🏠 Dashboard</a></li>
     <li><a href="inventario.html">🧃 Inventario</a></li>
     <li><a href="pedidos.html">📦 Pedidos</a></li>
     <li><a href="clientes.html">👥 Clientes</a></li>
@@ -49,6 +49,13 @@
     <section>
       <h2>📊 Balance</h2>
       <p id="balanceTotal">Balance total: $0.00</p>
+    </section>
+
+    <section id="resumenFinanciero" class="mt-4 p-4 rounded-lg border border-purple-300 bg-purple-50 shadow-sm">
+      <h2>📊 Resumen Financiero</h2>
+      <p><strong>Total Ingresos:</strong> $<span id="totalIngresos">0.00</span></p>
+      <p><strong>Total Gastos:</strong> $<span id="totalGastos">0.00</span></p>
+      <p><strong>Movimiento más alto:</strong> <span id="movimientoMayor">-</span></p>
     </section>
 
     <section>
