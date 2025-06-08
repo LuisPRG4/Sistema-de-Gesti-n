@@ -51,6 +51,9 @@ function cargarDashboard() {
       alertaStock.appendChild(li);
     }
   });
+
 }
+
+window.addEventListener("pageshow", cargarDashboard);
 
 document.addEventListener("DOMContentLoaded", cargarDashboard);
