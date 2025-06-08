@@ -5,11 +5,11 @@ function guardarProductos() {
   localStorage.setItem("productos", JSON.stringify(productos));
 }
 
-function mostrarProductos() {
+function mostrarProductos(filtrados = productos) {
   const lista = document.getElementById("listaProductos");
   lista.innerHTML = "";
 
-  productos.forEach((producto, index) => {
+  filtrados.forEach((producto, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
       <img src="${producto.imagen || 'https://via.placeholder.com/50'}" width="50" style="vertical-align:middle" />
@@ -27,9 +27,31 @@ function guardarProducto() {
   const nombre = document.getElementById("nombre").value.trim();
   const stock = parseInt(document.getElementById("stock").value);
   const vendidos = parseInt(document.getElementById("vendidos").value);
-  const imagen = document.getElementById("imagen").value.trim();
   const proveedor = document.getElementById("proveedor").value.trim();
+  const imagenInput = document.getElementById("imagen");
+const archivo = imagenInput.files[0];
 
+  if (archivo) {
+    const lector = new FileReader();
+    lector.onload = function (e) {
+      const imagenBase64 = e.target.result;
+      guardarProductoFinal(nombre, stock, vendidos, imagenBase64, proveedor);
+    };
+    lector.readAsDataURL(archivo);
+  }   else {
+        const imagenBase64 = editIndex !== null ? productos[editIndex].imagen : "";
+        guardarProductoFinal(nombre, stock, vendidos, imagenBase64, proveedor);
+  }
+
+
+  if (!nombre || isNaN(stock) || isNaN(vendidos) || stock < 0 || vendidos < 0) {
+    mostrarToast("Completa todos los campos correctamente ⚠️");
+    return;
+  }
+
+}
+
+function guardarProductoFinal(nombre, stock, vendidos, imagen, proveedor) {
   if (nombre && !isNaN(stock) && !isNaN(vendidos)) {
     const nuevoProducto = { nombre, stock, vendidos, imagen, proveedor };
 
@@ -56,9 +78,13 @@ function cargarProducto(index) {
   document.getElementById("nombre").value = producto.nombre;
   document.getElementById("stock").value = producto.stock;
   document.getElementById("vendidos").value = producto.vendidos;
-  document.getElementById("imagen").value = producto.imagen || "";
+  
   document.getElementById("proveedor").value = producto.proveedor || "";
   editIndex = index;
+    const preview = document.getElementById("imagenPreview");
+      preview.src = producto.imagen || "";
+      preview.style.display = producto.imagen ? "block" : "none";
+
   document.getElementById("btnGuardar").textContent = "Actualizar";
 }
 
@@ -79,6 +105,10 @@ function limpiarCampos() {
   document.getElementById("proveedor").value = "";
   document.getElementById("btnGuardar").textContent = "Guardar";
   editIndex = null;
+
+  const preview = document.getElementById("imagenPreview");
+  preview.src = "";
+  preview.style.display = "none";
 }
 
 function mostrarToast(mensaje) {
@@ -95,4 +125,40 @@ function mostrarToast(mensaje) {
   }, 3000);
 }
 
-document.addEventListener("DOMContentLoaded", mostrarProductos);
+function cargarProveedores() {
+  const select = document.getElementById("proveedor");
+  const proveedoresGuardados = JSON.parse(localStorage.getItem("proveedores")) || [];
+
+  // Limpiar el select antes de llenarlo
+  select.innerHTML = '<option value="">Seleccione un proveedor</option>';
+
+  proveedoresGuardados.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.nombre;
+    option.textContent = p.nombre;
+    select.appendChild(option);
+  });
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  mostrarProductos();
+  cargarProveedores();
+
+  document.getElementById("imagen").addEventListener("change", function () {
+    const archivo = this.files[0];
+    const preview = document.getElementById("imagenPreview");
+
+    if (archivo) {
+      const lector = new FileReader();
+      lector.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+      lector.readAsDataURL(archivo);
+    } else {
+      preview.src = "";
+      preview.style.display = "none";
+    }
+  });
+});
