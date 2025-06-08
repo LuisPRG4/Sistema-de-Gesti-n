@@ -14,6 +14,10 @@ const ventas = JSON.parse(localStorage.getItem("ventas")) || [
 ];
 
 function cargarDashboard() {
+  // Traemos datos del localStorage o vacíos
+  const productos = JSON.parse(localStorage.getItem("productos")) || [];
+  const ventas = JSON.parse(localStorage.getItem("ventas")) || [];
+
   const hoy = new Date().toISOString().slice(0, 10);
   const hace7Dias = new Date();
   hace7Dias.setDate(hace7Dias.getDate() - 7);
@@ -30,9 +34,12 @@ function cargarDashboard() {
   document.getElementById("ventasHoy").textContent = totalHoy;
   document.getElementById("ventasSemana").textContent = totalSemana;
 
-  // Más vendido
-  let top = productos.reduce((a, b) => (a.vendidos > b.vendidos ? a : b));
-  document.getElementById("productoTop").textContent = top.nombre;
+  if (productos.length > 0) {
+    let top = productos.reduce((a, b) => (a.vendidos > b.vendidos ? a : b));
+    document.getElementById("productoTop").textContent = top.nombre;
+  } else {
+    document.getElementById("productoTop").textContent = "-";
+  }
 
   // Alertas de stock
   const alertaStock = document.getElementById("alertasStock");
