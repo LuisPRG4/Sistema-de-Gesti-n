@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Proveedores</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="toastContainer" class="toast-container"></div>
+  <header>
+    <div class="header-container">
+        <img src="logo/Yogurt.png" alt="Logo" class="logo" />
+        <h1>🚚 Gestión de Proveedores</h1>
+    </div>
+  </header>
+<nav>
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  <ul id="navMenu">
+    <li><a href="index.html">🏠 Dashboard</a></li>
+    <li><a href="inventario.html">🧃 Inventario</a></li>
+    <li><a href="pedidos.html">📦 Pedidos</a></li>
+    <li><a href="clientes.html">👥 Clientes</a></li>
+    <li><a href="finanzas.html">💰 Finanzas</a></li>
+    <li><a href="proveedores.html">🚚 Proveedores</a></li>
+    <li><a href="ventas.html">🧾 Ventas</a></li>
+    <li><a href="reportesGraficos.html">📊 Reportes</a></li>
+  </ul>
+</nav>
+
+
+  <main>
+    <section>
+      <h2>➕ Agregar Proveedor</h2>
+      <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor" />
+      <input type="text" id="empresa" placeholder="Empresa o marca" />
+      <input type="text" id="telefono" placeholder="Teléfono o contacto" />
+      <input type="text" id="productos" placeholder="Productos" />
+      <button onclick="agregarProveedor()">Guardar Proveedor</button>
+    </section>
+
+    <section>
+      <h2>📋 Lista de Proveedores</h2>
+      <input type="text" id="buscadorProveedores" placeholder="🔍 Buscar proveedores..." oninput="filtrarProveedores()" />
+      <ul id="listaProveedores"></ul>
+    </section>
+  </main>
+
+  <script src="js/proveedores.js"></script>
+
+    <script>
+      function toggleMenu() {
+      document.getElementById("navMenu").classList.toggle("open");
+    }
+    </script>
+
+</body>
+</html>
