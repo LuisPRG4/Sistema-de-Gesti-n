@@ -232,5 +232,4 @@ document.addEventListener("DOMContentLoaded", () => {
   mostrarMovimientos();
   mostrarGrafico();
   mostrarResumenFinanciero();
-
 });
