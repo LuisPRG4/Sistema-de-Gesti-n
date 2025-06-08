@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventario - Yogurt Manager</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="toastContainer" class="toast-container"></div>
+  <header>
+    <div class="header-container">
+        <img src="logo/Yogurt.png" alt="Logo" class="logo" />
+        <h1>📦 Gestión de Inventario</h1>
+    </div>
+  </header>
+<nav>
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  <ul id="navMenu">
+    <li><a href="index.html">🏠 Panel de Control</a></li>
+    <li><a href="inventario.html">🧃 Inventario</a></li>
+    <li><a href="pedidos.html">📦 Pedidos</a></li>
+    <li><a href="clientes.html">👥 Clientes</a></li>
+    <li><a href="finanzas.html">💰 Finanzas</a></li>
+    <li><a href="proveedores.html">🚚 Proveedores</a></li>
+    <li><a href="ventas.html">🧾 Ventas</a></li>
+    <li><a href="reportesGraficos.html">📊 Reportes</a></li>
+  </ul>
+</nav>
+
+  <main>
+    <section>
+      <h2>➕ Agregar / Editar Producto</h2>
+      <input type="text" id="nombre" placeholder="Nombre del producto" />
+      <input type="number" id="stock" placeholder="Stock" />
+      <input type="number" id="vendidos" placeholder="Vendidos" />
+      <input type="file" id="imagen" accept="image/*" />
+
+        <div id="previewImagen" style="margin-top: 10px;">
+          <img id="imagenPreview" src="" alt="Previsualización" width="80" style="display:none; border-radius: 8px; box-shadow: 0 0 5px #ccc;" />
+        </div>
+
+      <select id="proveedor">
+        <option value="">Seleccione un proveedor</option>
+        <option value="Los SS">Los SS</option>
+      </select>
+
+      <button id="btnGuardar" onclick="guardarProducto()">Guardar</button>
+  </section>
+
+    <section>
+      <h2>📃 Lista de Productos</h2>
+      <ul id="listaProductos"></ul>
+    </section>
+  </main>
+
+  <script src="js/inventario.js"></script>
+
+    <script>
+      function toggleMenu() {
+      document.getElementById("navMenu").classList.toggle("open");
+    }
+    </script>
+
+</body>
+</html>
