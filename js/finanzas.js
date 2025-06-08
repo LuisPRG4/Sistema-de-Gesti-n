@@ -11,6 +11,7 @@ function agregarMovimiento() {
   const descripcion = document.getElementById("descripcion").value.trim();
   const fecha = new Date().toLocaleDateString();
 
+
   if (!isNaN(monto) && descripcion) {
     if (indiceEditando !== null) {
       // Editar movimiento existente
@@ -25,6 +26,7 @@ function agregarMovimiento() {
 
     guardarMovimientos();
     mostrarMovimientos();
+    mostrarResumenFinanciero();
     document.getElementById("monto").value = "";
     document.getElementById("descripcion").value = "";
   } else {
@@ -70,6 +72,7 @@ function eliminarMovimiento(index) {
     movimientos.splice(index, 1);
     guardarMovimientos();
     mostrarMovimientos();
+    mostrarResumenFinanciero();
     mostrarToast("Movimiento eliminado 🗑️");
   }
 }
@@ -201,7 +204,33 @@ function buscarMovimientos() {
   mostrarMovimientos(filtrados);
 }
 
+function mostrarResumenFinanciero() {
+  const totalIngresos = movimientos
+    .filter(m => m.tipo === "Ingreso")
+    .reduce((acc, m) => acc + m.monto, 0);
+
+  const totalGastos = movimientos
+    .filter(m => m.tipo === "Gasto")
+    .reduce((acc, m) => acc + m.monto, 0);
+
+  let mayor = null;
+  movimientos.forEach(mov => {
+    if (!mayor || mov.monto > mayor.monto) {
+      mayor = mov;
+    }
+  });
+
+  document.getElementById("totalIngresos").textContent = totalIngresos.toFixed(2);
+  document.getElementById("totalGastos").textContent = totalGastos.toFixed(2);
+  document.getElementById("movimientoMayor").textContent = mayor
+    ? `${mayor.tipo} de $${mayor.monto.toFixed(2)} (${mayor.descripcion})`
+    : "-";
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   mostrarMovimientos();
   mostrarGrafico();
+  mostrarResumenFinanciero();
+
 });
