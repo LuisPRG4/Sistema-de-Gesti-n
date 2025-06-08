@@ -28,19 +28,24 @@
   </ul>
 </nav>
 
-
-
   <main>
     <section>
       <h2>➕ Agregar / Editar Producto</h2>
       <input type="text" id="nombre" placeholder="Nombre del producto" />
       <input type="number" id="stock" placeholder="Stock" />
       <input type="number" id="vendidos" placeholder="Vendidos" />
-      <input type="text" id="imagen" placeholder="URL de imagen" />
-      <input type="text" id="proveedor" placeholder="Nombre del proveedor" />
+      <input type="file" id="imagen" accept="image/*" />
+
+        <div id="previewImagen" style="margin-top: 10px;">
+          <img id="imagenPreview" src="" alt="Previsualización" width="80" style="display:none; border-radius: 8px; box-shadow: 0 0 5px #ccc;" />
+        </div>
+
+      <select id="proveedor">
+          <option value="">Seleccione un proveedor</option>
+      </select>
+
       <button id="btnGuardar" onclick="guardarProducto()">Guardar</button>
   </section>
-
 
     <section>
       <h2>📃 Lista de Productos</h2>
