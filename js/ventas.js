@@ -1,7 +1,22 @@
+const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
 let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
+let productos = JSON.parse(localStorage.getItem("productos")) || [];
+let editVentaIndex = null;
+
 
 function guardarVentas() {
   localStorage.setItem("ventas", JSON.stringify(ventas));
+}
+
+function cargarClientes() {
+  const select = document.getElementById("clienteVenta");
+  select.innerHTML = '<option value="">Selecciona un cliente</option>';
+  clientes.forEach(cliente => {
+    const option = document.createElement("option");
+    option.value = cliente.nombre;
+    option.textContent = `${cliente.nombre} (${cliente.telefono || "sin número"})`;
+    select.appendChild(option);
+  });
 }
 
 function mostrarOpcionesPago() {
@@ -40,11 +55,35 @@ function registrarVenta() {
     detallePago = { acreedor, fechaVencimiento };
   }
 
+  actualizarInventarioAlVender(producto, 1);
+
   ventas.push({ cliente, producto, monto, tipoPago, detallePago });
+  if (editVentaIndex !== null) {
+  // Si se está editando, no modificar el inventario
+  ventas[editVentaIndex] = { cliente, producto, monto, tipoPago, detallePago };
+  mostrarToast("Venta actualizada ✅");
+  editVentaIndex = null;
+  document.getElementById("btnRegistrarVenta").textContent = "Registrar Venta";
+  } else {
+  // Registrar nueva venta y actualizar inventario
+  let productoEncontrado = productos.find(p => p.nombre === producto);
+  if (productoEncontrado) {
+    if (productoEncontrado.stock < 1) {
+      alert("No hay suficiente stock para este producto.");
+      return;
+    }
+    productoEncontrado.stock -= 1;
+    productoEncontrado.vendidos += 1;
+    localStorage.setItem("productos", JSON.stringify(productos));
+  }
+
+  ventas.push({ cliente, producto, monto, tipoPago, detallePago });
+  mostrarToast("Venta registrada con éxito");
+  }
+
   guardarVentas();
   mostrarVentas();
   limpiarFormulario();
-  mostrarToast("Venta registrada con éxito");
 }
 
 function mostrarVentas(filtradas = ventas) {
@@ -61,13 +100,15 @@ function mostrarVentas(filtradas = ventas) {
 
     const li = document.createElement("li");
     li.innerHTML = `
-      <strong>${venta.cliente}</strong><br>
-      Producto: ${venta.producto}<br>
-      Monto: $${venta.monto.toFixed(2)}<br>
-      Pago: ${venta.tipoPago}<br>
-      ${detalle}<br>
-      <button onclick="eliminarVenta(${index})">Eliminar</button>
+    <strong>${venta.cliente}</strong><br>
+    Producto: ${venta.producto}<br>
+    Monto: $${venta.monto.toFixed(2)}<br>
+    Pago: ${venta.tipoPago}<br>
+    ${detalle}<br>
+    <button onclick="cargarVenta(${index})">✏️ Editar</button>
+    <button onclick="revertirVenta(${index})">↩️ Revertir</button>
     `;
+
     lista.appendChild(li);
   });
 }
@@ -103,6 +144,8 @@ function limpiarFormulario() {
   document.getElementById("acreedor").value = "";
   document.getElementById("fechaVencimiento").value = "";
   mostrarOpcionesPago(); // Oculta todo
+  editVentaIndex = null;
+  document.getElementById("btnRegistrarVenta").textContent = "Registrar Venta";
 }
 
 function mostrarToast(mensaje) {
@@ -119,7 +162,70 @@ function mostrarToast(mensaje) {
   }, 3000);
 }
 
+function actualizarInventarioAlVender(productoNombre, cantidadVendida = 1) {
+  let productos = JSON.parse(localStorage.getItem("productos")) || [];
+  const index = productos.findIndex(p => p.nombre === productoNombre);
+  if (index !== -1) {
+    // Restar stock y sumar vendidos
+    productos[index].stock = Math.max(0, productos[index].stock - cantidadVendida);
+    productos[index].vendidos = (productos[index].vendidos || 0) + cantidadVendida;
+
+    localStorage.setItem("productos", JSON.stringify(productos));
+  }
+}
+
+function revertirVenta(index) {
+  const venta = ventas[index];
+  if (!venta) return;
+
+  const motivo = prompt("¿Por qué deseas revertir esta venta?");
+  if (motivo === null || motivo.trim() === "") {
+    alert("Debes ingresar un motivo para revertir la venta.");
+    return;
+  }
+
+  if (confirm(`¿Seguro que quieres revertir la venta de ${venta.producto} a ${venta.cliente}?\nMotivo: ${motivo}`)) {
+    // Devolver stock y restar vendidos
+    let productos = JSON.parse(localStorage.getItem("productos")) || [];
+    const prodIndex = productos.findIndex(p => p.nombre === venta.producto);
+    if (prodIndex !== -1) {
+      productos[prodIndex].stock += 1;
+      productos[prodIndex].vendidos = Math.max(0, (productos[prodIndex].vendidos || 1) - 1);
+      localStorage.setItem("productos", JSON.stringify(productos));
+    }
+
+    // Eliminar venta
+    ventas.splice(index, 1);
+    guardarVentas();
+    mostrarVentas();
+    mostrarToast("Venta revertida y stock actualizado");
+  }
+}
+
+function cargarVenta(index) {
+  const venta = ventas[index];
+  if (!venta) return;
+
+  document.getElementById("clienteVenta").value = venta.cliente;
+  document.getElementById("productoVenta").value = venta.producto;
+  document.getElementById("montoVenta").value = venta.monto;
+  document.getElementById("tipoPago").value = venta.tipoPago;
+  mostrarOpcionesPago();
+
+  if (venta.tipoPago === "contado") {
+    document.getElementById("metodoContado").value = venta.detallePago.metodo;
+  } else {
+    document.getElementById("acreedor").value = venta.detallePago.acreedor;
+    document.getElementById("fechaVencimiento").value = venta.detallePago.fechaVencimiento;
+  }
+
+  editVentaIndex = index;
+  document.getElementById("btnRegistrarVenta").textContent = "Actualizar Venta";
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   mostrarVentas();
   mostrarOpcionesPago();
+  cargarClientes(); // 👉 esto es lo que llena el select
 });
