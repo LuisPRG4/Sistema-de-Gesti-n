@@ -16,7 +16,7 @@ function agregarProveedor() {
     guardarProveedores();
     mostrarProveedores();
     limpiarFormulario();
-    mostrarToast("Proveedor agregado con éxito");
+    mostrarToast("Proveedor agregado con éxito 🚚");
   } else {
     alert("Completa todos los campos.");
   }
@@ -57,13 +57,14 @@ function eliminarProveedor(index) {
     proveedores.splice(index, 1);
     guardarProveedores();
     mostrarProveedores();
-    mostrarToast("Proveedor eliminado");
+    mostrarToast("Proveedor eliminado 🗑️");
   }
 }
 
 function limpiarFormulario() {
   document.getElementById("nombreProveedor").value = "";
-  document.getElementById("contacto").value = "";
+  document.getElementById("empresa").value = "";
+  document.getElementById("telefono").value = "";
   document.getElementById("productos").value = "";
 }
 
@@ -73,12 +74,13 @@ function mostrarToast(mensaje) {
   toast.className = "toast";
   toast.textContent = mensaje;
   toastContainer.appendChild(toast);
+  console.log("Toast!");
 
   setTimeout(() => toast.classList.add("show"), 100);
   setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 400);
-  }, 3000);
+  toast.classList.remove("show");
+  setTimeout(() => toast.remove(), 400);
+}, 5000); // antes era 3000
 }
 
 document.addEventListener("DOMContentLoaded", mostrarProveedores);
