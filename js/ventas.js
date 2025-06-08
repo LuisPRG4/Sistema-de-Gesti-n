@@ -55,36 +55,38 @@ function registrarVenta() {
     detallePago = { acreedor, fechaVencimiento };
   }
 
-  actualizarInventarioAlVender(producto, 1);
-
-  ventas.push({ cliente, producto, monto, tipoPago, detallePago });
-  if (editVentaIndex !== null) {
-  // Si se está editando, no modificar el inventario
-  ventas[editVentaIndex] = { cliente, producto, monto, tipoPago, detallePago };
-  mostrarToast("Venta actualizada ✅");
-  editVentaIndex = null;
-  document.getElementById("btnRegistrarVenta").textContent = "Registrar Venta";
-  } else {
-  // Registrar nueva venta y actualizar inventario
-  let productoEncontrado = productos.find(p => p.nombre === producto);
-  if (productoEncontrado) {
-    if (productoEncontrado.stock < 1) {
-      alert("No hay suficiente stock para este producto.");
-      return;
-    }
-    productoEncontrado.stock -= 1;
-    productoEncontrado.vendidos += 1;
-    localStorage.setItem("productos", JSON.stringify(productos));
+  const productoEncontrado = productos.find(p => p.nombre === producto);
+  if (!productoEncontrado) {
+    alert("El producto no existe en inventario.");
+    return;
   }
 
-  ventas.push({ cliente, producto, monto, tipoPago, detallePago });
-  mostrarToast("Venta registrada con éxito");
+  // Si es una nueva venta, validamos el stock
+  if (editVentaIndex === null && productoEncontrado.stock < 1) {
+    alert("No hay suficiente stock para este producto.");
+    return;
+  }
+
+  const nuevaVenta = { cliente, producto, monto, tipoPago, detallePago };
+
+  if (editVentaIndex !== null) {
+    ventas[editVentaIndex] = nuevaVenta;
+    mostrarToast("Venta actualizada ✅");
+    editVentaIndex = null;
+    document.getElementById("btnRegistrarVenta").textContent = "Registrar Venta";
+  } else {
+    ventas.push(nuevaVenta);
+    productoEncontrado.stock -= 1;
+    productoEncontrado.vendidos = (productoEncontrado.vendidos || 0) + 1;
+    localStorage.setItem("productos", JSON.stringify(productos));
+    mostrarToast("Venta registrada con éxito");
   }
 
   guardarVentas();
   mostrarVentas();
   limpiarFormulario();
 }
+
 
 function mostrarVentas(filtradas = ventas) {
   const lista = document.getElementById("listaVentas");
