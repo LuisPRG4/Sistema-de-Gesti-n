@@ -32,41 +32,67 @@
 
   <main>
     <section>
-      <h2>➕ Registrar Venta</h2>
-      <select id="clienteVenta">
-        <option value="">Selecciona un cliente</option>
-      </select>
+  <h2>➕ Registrar Venta Multiproducto</h2>
 
-      <select id="productoVenta">
-        <option value="">Selecciona un producto</option>
-      </select>
+  <label>Cliente:</label>
+  <select id="clienteVenta">
+    <option value="">Selecciona un cliente</option>
+  </select>
 
-      <input type="number" id="montoVenta" placeholder="Monto ($)" />
+  <label>Producto:</label>
+  <select id="productoVenta">
+    <option value="">Selecciona un producto</option>
+  </select>
 
-      <select id="tipoPago" onchange="mostrarOpcionesPago()">
-        <option value="">Condición</option>
-        <option value="contado">Contado</option>
-        <option value="credito">Crédito</option>
-      </select>
+  <label>Cantidad:</label>
+  <input type="number" id="cantidadVenta" min="1" value="1">
 
-      <!-- Contado -->
-      <div id="opcionesContado" style="display: none;">
-        <select id="metodoContado">
-          <option value="">Método de pago</option>
-          <option value="efectivo">Efectivo</option>
-          <option value="transferencia">Transferencia</option>
-          <option value="otro">Otro</option>
-        </select>
-      </div>
+  <button onclick="agregarProductoAVenta()">➕ Agregar Producto</button>
 
-      <!-- Crédito -->
-      <div id="opcionesCredito" style="display: none;">
-        <input type="text" id="acreedor" placeholder="Nombre del acreedor" />
-        <input type="date" id="fechaVencimiento" />
-      </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio Unitario</th>
+        <th>Subtotal</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="tablaProductosVenta"></tbody>
+  </table>
 
-      <button onclick="registrarVenta()">Guardar Venta</button>
-    </section>
+  <p><strong>Total:</strong> $<span id="totalVenta">0.00</span></p>
+
+  <label>Condición de Pago:</label>
+  <select id="tipoPago" onchange="mostrarOpcionesPago()">
+    <option value="">Condición</option>
+    <option value="contado">Contado</option>
+    <option value="credito">Crédito</option>
+  </select>
+
+  <!-- Contado -->
+  <div id="opcionesContado" style="display: none;">
+    <label>Método:</label>
+    <select id="metodoContado">
+      <option value="">Método de pago</option>
+      <option value="efectivo">Efectivo</option>
+      <option value="transferencia">Transferencia</option>
+      <option value="otro">Otro</option>
+    </select>
+  </div>
+
+  <!-- Crédito -->
+  <div id="opcionesCredito" style="display: none;">
+    <label>Acreedor:</label>
+    <input type="text" id="acreedor" placeholder="Nombre del acreedor" />
+    <label>Fecha Vencimiento:</label>
+    <input type="date" id="fechaVencimiento" />
+  </div>
+
+  <button onclick="registrarVenta()">🧾 Guardar Venta</button>
+</section>
+
 
     <section>
       <h2>📋 Historial de Ventas</h2>
@@ -82,6 +108,5 @@
       document.getElementById("navMenu").classList.toggle("open");
     }
     </script>
-
 </body>
 </html>
