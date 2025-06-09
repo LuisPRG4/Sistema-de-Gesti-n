@@ -2,7 +2,7 @@ const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
 let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
 let editVentaIndex = null;
-
+let productosVenta = [];
 
 function guardarVentas() {
   localStorage.setItem("ventas", JSON.stringify(ventas));
@@ -27,12 +27,10 @@ function mostrarOpcionesPago() {
 
 function registrarVenta() {
   const cliente = document.getElementById("clienteVenta").value.trim();
-  const producto = document.getElementById("productoVenta").value.trim();
-  const monto = parseFloat(document.getElementById("montoVenta").value.trim());
   const tipoPago = document.getElementById("tipoPago").value;
 
-  if (!cliente || !producto || isNaN(monto) || !tipoPago) {
-    alert("Completa todos los campos principales.");
+  if (!cliente || productosVenta.length === 0 || !tipoPago) {
+    alert("Completa todos los campos principales y agrega productos.");
     return;
   }
 
@@ -55,36 +53,78 @@ function registrarVenta() {
     detallePago = { acreedor, fechaVencimiento };
   }
 
-  const productoEncontrado = productos.find(p => p.nombre === producto);
-  if (!productoEncontrado) {
-    alert("El producto no existe en inventario.");
-    return;
-  }
+  let ingreso = 0;
+  let ganancia = 0;
 
-  // Si es una nueva venta, validamos el stock
-  if (editVentaIndex === null && productoEncontrado.stock < 1) {
-    alert("No hay suficiente stock para este producto.");
-    return;
-  }
+  productosVenta.forEach(p => {
+    ingreso += p.subtotal;
+    ganancia += (p.precio - p.costo) * p.cantidad;
+  });
 
-  const nuevaVenta = { cliente, producto, monto, tipoPago, detallePago };
+  const nuevaVenta = {
+    cliente,
+    productos: [...productosVenta],
+    tipoPago,
+    detallePago,
+    ingreso,
+    ganancia,
+    fecha: new Date().toISOString().split("T")[0]
+  };
+
+  let productosActualizados = [...productos];
 
   if (editVentaIndex !== null) {
-  ventas[editVentaIndex] = nuevaVenta;
-  mostrarToast("Venta actualizada ✅");
-  editVentaIndex = null;
-  document.getElementById("btnRegistrarVenta").textContent = "Registrar Venta";
-} else {
-  ventas.push(nuevaVenta);
-  actualizarInventarioAlVender(producto, 1); // ✅ Aquí la colocas
-  mostrarToast("Venta registrada con éxito");
-}
+    const ventaAnterior = ventas[editVentaIndex];
+    ventaAnterior.productos.forEach(p => {
+      const prod = productosActualizados.find(prod => prod.nombre === p.nombre);
+      if (prod) {
+        prod.stock += p.cantidad;
+        prod.vendidos = Math.max(0, prod.vendidos - p.cantidad);
+      }
+    });
 
+    productosVenta.forEach(p => {
+      const prod = productosActualizados.find(prod => prod.nombre === p.nombre);
+      if (prod) {
+        prod.stock = Math.max(0, prod.stock - p.cantidad);
+        prod.vendidos = (prod.vendidos || 0) + p.cantidad;
+      }
+    });
+
+    ventas[editVentaIndex] = nuevaVenta;
+    mostrarToast("Venta actualizada ✅");
+    editVentaIndex = null;
+    document.getElementById("btnRegistrarVenta").textContent = "Registrar Venta";
+  } else {
+    ventas.push(nuevaVenta);
+
+    productosVenta.forEach(p => {
+      const prod = productosActualizados.find(prod => prod.nombre === p.nombre);
+      if (prod) {
+        prod.stock = Math.max(0, prod.stock - p.cantidad);
+        prod.vendidos = (prod.vendidos || 0) + p.cantidad;
+      }
+    });
+
+    const movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
+    movimientos.push({
+      tipo: "ingreso",
+      monto: ingreso,
+      ganancia,
+      fecha: nuevaVenta.fecha,
+      descripcion: `Venta a ${cliente}`
+    });
+    localStorage.setItem("movimientos", JSON.stringify(movimientos));
+
+    mostrarToast("Venta registrada con éxito");
+  }
+
+  productos = productosActualizados;
+  localStorage.setItem("productos", JSON.stringify(productos));
   guardarVentas();
   mostrarVentas();
   limpiarFormulario();
 }
-
 
 function mostrarVentas(filtradas = ventas) {
   const lista = document.getElementById("listaVentas");
@@ -98,41 +138,31 @@ function mostrarVentas(filtradas = ventas) {
       detalle = `Acreedor: ${venta.detallePago.acreedor}<br>Vence: ${venta.detallePago.fechaVencimiento}`;
     }
 
+    const productosTexto = venta.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", ");
+
     const li = document.createElement("li");
     li.innerHTML = `
-    <strong>${venta.cliente}</strong><br>
-    Producto: ${venta.producto}<br>
-    Monto: $${venta.monto.toFixed(2)}<br>
-    Pago: ${venta.tipoPago}<br>
-    ${detalle}<br>
-    <button onclick="cargarVenta(${index})">✏️ Editar</button>
-    <button onclick="revertirVenta(${index})">↩️ Revertir</button>
+      <strong>${venta.cliente}</strong><br>
+      Productos: ${productosTexto}<br>
+      Total: $${venta.ingreso.toFixed(2)}<br>
+      Pago: ${venta.tipoPago}<br>
+      ${detalle}<br>
+      <button onclick="cargarVenta(${index})">✏️ Editar</button>
+      <button onclick="revertirVenta(${index})">↩️ Revertir</button>
     `;
-
     lista.appendChild(li);
   });
 }
 
 function filtrarVentas() {
   const filtro = document.getElementById("buscadorVentas").value.toLowerCase();
-
   const resultados = ventas.filter(venta =>
     venta.cliente.toLowerCase().includes(filtro) ||
-    venta.producto.toLowerCase().includes(filtro) ||
-    venta.monto.toString().includes(filtro) ||
+    venta.productos.some(p => p.nombre.toLowerCase().includes(filtro)) ||
+    venta.ingreso.toString().includes(filtro) ||
     venta.tipoPago.toLowerCase().includes(filtro)
   );
-
   mostrarVentas(resultados);
-}
-
-function eliminarVenta(index) {
-  if (confirm("¿Eliminar esta venta?")) {
-    ventas.splice(index, 1);
-    guardarVentas();
-    mostrarVentas();
-    mostrarToast("Venta eliminada");
-  }
 }
 
 function limpiarFormulario() {
@@ -143,7 +173,9 @@ function limpiarFormulario() {
   document.getElementById("metodoContado").value = "";
   document.getElementById("acreedor").value = "";
   document.getElementById("fechaVencimiento").value = "";
-  mostrarOpcionesPago(); // Oculta todo
+  productosVenta = [];
+  actualizarTablaProductos();
+  mostrarOpcionesPago();
   editVentaIndex = null;
   document.getElementById("btnRegistrarVenta").textContent = "Registrar Venta";
 }
@@ -154,24 +186,11 @@ function mostrarToast(mensaje) {
   toast.className = "toast";
   toast.textContent = mensaje;
   toastContainer.appendChild(toast);
-
   setTimeout(() => toast.classList.add("show"), 100);
   setTimeout(() => {
     toast.classList.remove("show");
     setTimeout(() => toast.remove(), 400);
   }, 3000);
-}
-
-function actualizarInventarioAlVender(productoNombre, cantidadVendida = 1) {
-  let productos = JSON.parse(localStorage.getItem("productos")) || [];
-  const index = productos.findIndex(p => p.nombre === productoNombre);
-  if (index !== -1) {
-    // Restar stock y sumar vendidos
-    productos[index].stock = Math.max(0, productos[index].stock - cantidadVendida);
-    productos[index].vendidos = (productos[index].vendidos || 0) + cantidadVendida;
-
-    localStorage.setItem("productos", JSON.stringify(productos));
-  }
 }
 
 function revertirVenta(index) {
@@ -184,17 +203,16 @@ function revertirVenta(index) {
     return;
   }
 
-  if (confirm(`¿Seguro que quieres revertir la venta de ${venta.producto} a ${venta.cliente}?\nMotivo: ${motivo}`)) {
-    // Devolver stock y restar vendidos
-    let productos = JSON.parse(localStorage.getItem("productos")) || [];
-    const prodIndex = productos.findIndex(p => p.nombre === venta.producto);
-    if (prodIndex !== -1) {
-      productos[prodIndex].stock += 1;
-      productos[prodIndex].vendidos = Math.max(0, (productos[prodIndex].vendidos || 1) - 1);
-      localStorage.setItem("productos", JSON.stringify(productos));
-    }
+  if (confirm(`¿Seguro que quieres revertir la venta a ${venta.cliente}?\nMotivo: ${motivo}`)) {
+    venta.productos.forEach(p => {
+      const prod = productos.find(prod => prod.nombre === p.nombre);
+      if (prod) {
+        prod.stock += p.cantidad;
+        prod.vendidos = Math.max(0, (prod.vendidos || 0) - p.cantidad);
+      }
+    });
 
-    // Eliminar venta
+    localStorage.setItem("productos", JSON.stringify(productos));
     ventas.splice(index, 1);
     guardarVentas();
     mostrarVentas();
@@ -207,8 +225,6 @@ function cargarVenta(index) {
   if (!venta) return;
 
   document.getElementById("clienteVenta").value = venta.cliente;
-  document.getElementById("productoVenta").value = venta.producto;
-  document.getElementById("montoVenta").value = venta.monto;
   document.getElementById("tipoPago").value = venta.tipoPago;
   mostrarOpcionesPago();
 
@@ -219,6 +235,8 @@ function cargarVenta(index) {
     document.getElementById("fechaVencimiento").value = venta.detallePago.fechaVencimiento;
   }
 
+  productosVenta = [...venta.productos];
+  actualizarTablaProductos();
   editVentaIndex = index;
   document.getElementById("btnRegistrarVenta").textContent = "Actualizar Venta";
 }
@@ -234,10 +252,74 @@ function cargarProductos() {
   });
 }
 
+function agregarProductoAVenta() {
+  const productoNombre = document.getElementById("productoVenta").value;
+  const cantidad = parseInt(document.getElementById("cantidadVenta").value);
+
+  if (!productoNombre || isNaN(cantidad) || cantidad < 1) {
+    alert("Selecciona un producto válido y una cantidad.");
+    return;
+  }
+
+  const producto = productos.find(p => p.nombre === productoNombre);
+  if (!producto) {
+    alert("Producto no encontrado en el inventario.");
+    return;
+  }
+
+  const existente = productosVenta.find(p => p.nombre === productoNombre);
+  const totalCantidad = (existente ? existente.cantidad : 0) + cantidad;
+
+  if (producto.stock < totalCantidad) {
+    alert("Stock insuficiente para esta cantidad total.");
+    return;
+  }
+
+  if (existente) {
+    existente.cantidad += cantidad;
+    existente.subtotal = existente.cantidad * producto.precio;
+  } else {
+    productosVenta.push({
+      nombre: producto.nombre,
+      precio: producto.precio,
+      costo: producto.costo,
+      cantidad,
+      subtotal: cantidad * producto.precio
+    });
+  }
+
+  actualizarTablaProductos();
+}
+
+function actualizarTablaProductos() {
+  const tabla = document.getElementById("tablaProductosVenta");
+  tabla.innerHTML = "";
+  let total = 0;
+
+  productosVenta.forEach((p, index) => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${p.nombre}</td>
+      <td>${p.cantidad}</td>
+      <td>$${p.precio.toFixed(2)}</td>
+      <td>$${p.subtotal.toFixed(2)}</td>
+      <td><button onclick="eliminarProductoVenta(${index})">❌</button></td>
+    `;
+    tabla.appendChild(fila);
+    total += p.subtotal;
+  });
+
+  document.getElementById("totalVenta").textContent = total.toFixed(2);
+}
+
+function eliminarProductoVenta(index) {
+  productosVenta.splice(index, 1);
+  actualizarTablaProductos();
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   mostrarVentas();
   mostrarOpcionesPago();
-  cargarClientes(); // 👉 esto es lo que llena el select
-  cargarProductos(); // 👉 ahora también carga productos
+  cargarClientes();
+  cargarProductos();
 });
