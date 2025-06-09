@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Clientes</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Proveedores</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div id="toastContainer" class="toast-container"></div>
   <header>
     <div class="header-container">
         <img src="logo/Yogurt.png" alt="Logo" class="logo" />
-        <h1>👥 Gestión de Clientes</h1>
+        <h1>🚚 Gestión de Proveedores</h1>
     </div>
   </header>
 <nav>
@@ -28,30 +28,28 @@
   </ul>
 </nav>
 
-
-
   <main>
     <section>
-      <h2>➕ Agregar Cliente</h2>
-        <label>Ingresa el nombre del cliente:</label>
-      <input type="text" id="nombreCliente" placeholder="Nombre completo" />
-        <label>Ingresa la dirección del cliente:</label>
-      <input type="text" id="direccion" placeholder="Dirección" />
-        <label>Número de contacto del cliente:</label>
-      <input type="text" id="telefono" placeholder="Teléfono" />
-        <label>Correo electrónico del cliente:</label>
-      <input type="email" id="email" placeholder="Correo electrónico" />
-      <button onclick="agregarCliente()">Guardar Cliente</button>
+      <h2>➕ Agregar Proveedor</h2>
+        <label>Ingresa el nombre del proveedor:</label>
+      <input type="text" id="nombreProveedor" placeholder="Nombre del proveedor" />
+        <label>Ingresa la empresa o marca del proveedor:</label>
+      <input type="text" id="empresa" placeholder="Empresa o marca" />
+        <label>Número de contacto del proveedor:</label>
+      <input type="number" id="telefono" placeholder="Teléfono" />
+        <label>Ingresa el producto que provee:</label>
+      <input type="text" id="productos" placeholder="Productos" />
+      <button onclick="agregarProveedor()">Guardar Proveedor</button>
     </section>
 
     <section>
-      <h2>📋 Lista de Clientes</h2>
-            <input type="text" id="buscadorClientes" placeholder="Buscar clientes..." oninput="filtrarClientes()" />
-      <ul id="listaClientes"></ul>
+      <h2>📋 Lista de Proveedores</h2>
+      <input type="text" id="buscadorProveedores" placeholder="🔍 Buscar proveedores..." oninput="filtrarProveedores()" />
+      <ul id="listaProveedores"></ul>
     </section>
   </main>
 
-  <script src="js/clientes.js"></script>
+  <script src="js/proveedores.js"></script>
 
     <script>
       function toggleMenu() {
