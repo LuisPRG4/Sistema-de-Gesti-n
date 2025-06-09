@@ -142,10 +142,10 @@ function cargarProveedores() {
   // Limpiar el select antes de llenarlo
   select.innerHTML = '<option value="">Seleccione un proveedor</option>';
 
-  // Agregar opción especial "Los SS"
+  // Agregar opción especial "Propio"
   const optionSS = document.createElement("option");
-  optionSS.value = "los_ss";  // valor que quieras darle
-  optionSS.textContent = "Los SS";
+  optionSS.value = "propio";  // valor que quieras darle
+  optionSS.textContent = "Propio";
   select.appendChild(optionSS);
 
   proveedoresGuardados.forEach(p => {
