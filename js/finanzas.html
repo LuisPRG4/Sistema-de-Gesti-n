@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión Financiera</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div id="toastContainer" class="toast-container"></div>
+  <header>
+    <div class="header-container">
+      <img src="logo/Yogurt.png" alt="Logo" class="logo" />
+      <h1>💰 Gestión Financiera</h1>
+    </div>
+  </header>
+
+  <nav>
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  <ul id="navMenu">
+    <li><a href="index.html">🏠 Panel de Control</a></li>
+    <li><a href="inventario.html">🧃 Inventario</a></li>
+    <li><a href="pedidos.html">📦 Pedidos</a></li>
+    <li><a href="clientes.html">👥 Clientes</a></li>
+    <li><a href="finanzas.html">💰 Finanzas</a></li>
+    <li><a href="proveedores.html">🚚 Proveedores</a></li>
+    <li><a href="ventas.html">🧾 Ventas</a></li>
+    <li><a href="reportesGraficos.html">📊 Reportes</a></li>
+  </ul>
+</nav>
+
+  <main>
+    <section>
+      <h2>➕ Nuevo Movimiento</h2>
+      <label for="tipoMovimiento">Tipo de movimiento:</label>
+      <select id="tipoMovimiento">
+        
+        <option value="Ingreso">Ingreso</option>
+        <option value="Gasto">Gasto</option>
+      </select>
+      <label for="monto">Monto:</label>
+      <input type="number" id="monto" placeholder="Monto" />
+
+      <label for="descripcion">Descripción:</label>
+      <input type="text" id="descripcion" placeholder="Descripción" />
+      <button onclick="agregarMovimiento()">Guardar Movimiento</button>
+    </section>
+
+    <section>
+      <h2>📊 Balance</h2>
+      <p id="balanceTotal">Balance total: $0.00</p>
+    </section>
+
+    <section id="resumenFinanciero" class="mt-4 p-4 rounded-lg border border-purple-300 bg-purple-50 shadow-sm">
+      <h2>📊 Resumen Financiero</h2>
+      <p><strong>Total Ingresos:</strong> $<span id="totalIngresos">0.00</span></p>
+      <p><strong>Total Gastos:</strong> $<span id="totalGastos">0.00</span></p>
+      <p><strong>📈 Ganancia Total:</strong> $<span id="gananciaTotal">0.00</span></p>
+      <p><strong>Movimiento más alto:</strong> <span id="movimientoMayor">-</span></p>
+    </section>
+
+    <section>
+      <h2>📉 Resumen Visual</h2>
+      <canvas id="graficoFinanzas" width="400" height="400"></canvas>
+    </section>
+
+    <section>
+      <h2>📅 Filtrar por Fecha</h2>
+      <label>Desde: <input type="date" id="fechaDesde"></label>
+      <label>Hasta: <input type="date" id="fechaHasta"></label>
+      <button onclick="filtrarPorFecha()">Aplicar Filtro</button>
+      <button onclick="limpiarFiltroFecha()">Limpiar</button>
+    </section>
+
+    <section>
+        <h2>🔍 Buscar Movimientos</h2>
+        <input type="text" id="buscadorMovimientos" placeholder="Buscar por descripción o tipo..." oninput="buscarMovimientos()" />
+  
+      <h2>📋 Historial de Movimientos</h2>
+      <ul id="listaMovimientos"></ul>
+    </section>
+
+    <button onclick="exportarExcel()">📤 Exportar a Excel</button>
+
+  </main>
+
+  <script src="js/chart.js"></script>
+  <script src="js/finanzas.js"></script>
+
+    <script>
+        function toggleMenu() {
+        document.getElementById("navMenu").classList.toggle("open");
+    }
+    </script>
+
+</body>
+</html>
