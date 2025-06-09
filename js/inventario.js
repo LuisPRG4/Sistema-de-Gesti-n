@@ -14,7 +14,9 @@ function mostrarProductos(filtrados = productos) {
     li.innerHTML = `
       <img src="${producto.imagen || 'https://via.placeholder.com/50'}" width="50" style="vertical-align:middle" />
       <strong>${producto.nombre}</strong> - Stock: ${producto.stock}, Vendidos: ${producto.vendidos}, 
-      Proveedor: ${producto.proveedor || 'N/A'}
+      Proveedor: ${producto.proveedor || 'N/A'},
+      Costo: $${producto.costo ? producto.costo.toFixed(2) : '0.00'}, 
+      Precio: $${producto.precio ? producto.precio.toFixed(2) : '0.00'}
       <br>
       <button onclick="cargarProducto(${index})">✏️ Editar</button>
       <button onclick="eliminarProducto(${index})">🗑️ Eliminar</button>
@@ -27,33 +29,40 @@ function guardarProducto() {
   const nombre = document.getElementById("nombre").value.trim();
   const stock = parseInt(document.getElementById("stock").value);
   const vendidos = parseInt(document.getElementById("vendidos").value);
+  const costo = parseFloat(document.getElementById("costo").value);
+  const precio = parseFloat(document.getElementById("precio").value);
   const proveedor = document.getElementById("proveedor").value.trim();
   const imagenInput = document.getElementById("imagen");
-const archivo = imagenInput.files[0];
+  const archivo = imagenInput.files[0];
 
   if (archivo) {
     const lector = new FileReader();
     lector.onload = function (e) {
       const imagenBase64 = e.target.result;
-      guardarProductoFinal(nombre, stock, vendidos, imagenBase64, proveedor);
+      guardarProductoFinal(nombre, stock, vendidos, costo, precio, imagenBase64, proveedor);
     };
     lector.readAsDataURL(archivo);
-  }   else {
-        const imagenBase64 = editIndex !== null ? productos[editIndex].imagen : "";
-        guardarProductoFinal(nombre, stock, vendidos, imagenBase64, proveedor);
+  } else {
+    const imagenBase64 = editIndex !== null ? productos[editIndex].imagen : "";
+    guardarProductoFinal(nombre, stock, vendidos, costo, precio, imagenBase64, proveedor);
   }
 
-
-  if (!nombre || isNaN(stock) || isNaN(vendidos) || stock < 0 || vendidos < 0) {
+  // Validación después de llamar a guardarProductoFinal no es efectiva, la movemos arriba
+  if (!nombre || isNaN(stock) || isNaN(vendidos) || isNaN(costo) || isNaN(precio) || stock < 0 || vendidos < 0 || costo < 0 || precio < 0) {
     mostrarToast("Completa todos los campos correctamente ⚠️");
     return;
   }
-
 }
 
-function guardarProductoFinal(nombre, stock, vendidos, imagen, proveedor) {
-  if (nombre && !isNaN(stock) && !isNaN(vendidos)) {
-    const nuevoProducto = { nombre, stock, vendidos, imagen, proveedor };
+function guardarProductoFinal(nombre, stock, vendidos, costo, precio, imagen, proveedor) {
+  if (
+    nombre &&
+    !isNaN(stock) &&
+    !isNaN(vendidos) &&
+    !isNaN(costo) &&
+    !isNaN(precio)
+  ) {
+    const nuevoProducto = { nombre, stock, vendidos, costo, precio, imagen, proveedor };
 
     if (editIndex === null) {
       productos.push(nuevoProducto);
@@ -72,6 +81,7 @@ function guardarProductoFinal(nombre, stock, vendidos, imagen, proveedor) {
     mostrarToast("Completa todos los campos correctamente ⚠️");
   }
 }
+
 
 function cargarProducto(index) {
   const producto = productos[index];
