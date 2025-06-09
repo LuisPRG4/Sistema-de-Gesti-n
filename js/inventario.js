@@ -111,6 +111,8 @@ function limpiarCampos() {
   document.getElementById("nombre").value = "";
   document.getElementById("stock").value = "";
   document.getElementById("vendidos").value = "";
+  document.getElementById("costo").value = ""; // 🟣 Agregado
+  document.getElementById("precio").value = ""; // 🟣 Agregado
   document.getElementById("imagen").value = "";
   document.getElementById("proveedor").value = "";
   document.getElementById("btnGuardar").textContent = "Guardar";
