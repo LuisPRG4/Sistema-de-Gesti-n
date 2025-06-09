@@ -205,16 +205,21 @@ function buscarMovimientos() {
 }
 
 function mostrarResumenFinanciero() {
-  const totalIngresos = movimientos
-    .filter(m => m.tipo === "Ingreso")
-    .reduce((acc, m) => acc + m.monto, 0);
-
-  const totalGastos = movimientos
-    .filter(m => m.tipo === "Gasto")
-    .reduce((acc, m) => acc + m.monto, 0);
-
+  let totalIngresos = 0;
+  let totalGastos = 0;
+  let totalGanancias = 0;
   let mayor = null;
+
   movimientos.forEach(mov => {
+    if (mov.tipo === "Ingreso") {
+      totalIngresos += mov.monto;
+      if (mov.ganancia) {
+        totalGanancias += mov.ganancia;
+      }
+    } else if (mov.tipo === "Gasto") {
+      totalGastos += mov.monto;
+    }
+
     if (!mayor || mov.monto > mayor.monto) {
       mayor = mov;
     }
@@ -222,10 +227,12 @@ function mostrarResumenFinanciero() {
 
   document.getElementById("totalIngresos").textContent = totalIngresos.toFixed(2);
   document.getElementById("totalGastos").textContent = totalGastos.toFixed(2);
+  document.getElementById("gananciaTotal").textContent = totalGanancias.toFixed(2);
   document.getElementById("movimientoMayor").textContent = mayor
     ? `${mayor.tipo} de $${mayor.monto.toFixed(2)} (${mayor.descripcion})`
     : "-";
 }
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
