@@ -93,7 +93,6 @@
   <button onclick="registrarVenta()">🧾 Guardar Venta</button>
 </section>
 
-
     <section>
       <h2>📋 Historial de Ventas</h2>
       <input type="text" id="buscadorVentas" placeholder="🔍 Buscar ventas..." oninput="filtrarVentas()" />
@@ -108,5 +107,11 @@
       document.getElementById("navMenu").classList.toggle("open");
     }
     </script>
+
+    <script>
+  if (sessionStorage.getItem("sesionIniciada") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
 </body>
 </html>
