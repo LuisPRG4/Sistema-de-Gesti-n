@@ -31,8 +31,12 @@
   <main>
     <section>
       <h2>➕ Nuevo Pedido</h2>
+      
         <label>Selecciona el cliente:</label>
-      <input type="text" id="cliente" placeholder="Nombre del cliente">
+        <input type="text" id="cliente" list="clientesList" placeholder="Selecciona o escribe el nombre..." autocomplete="off">
+        <datalist id="clientesList"></datalist>
+
+
         <label>Selecciona el producto:</label>
       <select id="producto"></select>
         <label>Ingresa la cantidad:</label>
