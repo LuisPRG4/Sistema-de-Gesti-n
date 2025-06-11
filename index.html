@@ -52,5 +52,21 @@
   }
     </script>
 
+    <script>
+  if (sessionStorage.getItem("sesionIniciada") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
+
+<button onclick="cerrarSesion()">Cerrar sesión</button>
+
+<script>
+  function cerrarSesion() {
+    sessionStorage.removeItem("sesionIniciada");
+    window.location.href = "login.html";
+  }
+</script>
+
+
 </body>
 </html>
