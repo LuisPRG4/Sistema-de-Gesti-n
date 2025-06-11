@@ -60,5 +60,10 @@
     }
     </script>
 
+    <script>
+  if (sessionStorage.getItem("sesionIniciada") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
 </body>
 </html>
