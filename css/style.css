@@ -294,3 +294,24 @@ label {
   text-align: left;
   font-size: 1rem;
 }
+
+/* PARA EL CAMPO EN PEDIDOS */
+
+.sugerencias {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  width: 95%;
+  z-index: 999;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.sugerencias li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.sugerencias li:hover {
+  background-color: #f0f0f0;
+}
