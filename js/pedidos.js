@@ -18,10 +18,16 @@ function cargarProductos() {
 }
 
 function agregarPedido() {
+
   const cliente = document.getElementById("cliente").value.trim();
   const indexProducto = parseInt(document.getElementById("producto").value);
   const cantidad = parseInt(document.getElementById("cantidad").value);
   const precioUnitario = parseFloat(document.getElementById("precioUnitario").value);
+
+  if (!cliente) {
+    mostrarToast("Selecciona un cliente válido ⚠️");
+    return;
+  }
 
   if (!cliente || isNaN(indexProducto) || isNaN(cantidad) || isNaN(precioUnitario)) {
     mostrarToast("Completa todos los campos correctamente ⚠️");
@@ -89,7 +95,76 @@ function mostrarToast(mensaje) {
   }, 3000);
 }
 
+function cargarClientesList() {
+  const dataList = document.getElementById("clientesList");
+  dataList.innerHTML = "";
+  const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
+  clientes.forEach(c => {
+    const option = document.createElement("option");
+    option.value = c.nombre;
+    dataList.appendChild(option);
+  });
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   cargarProductos();
+  cargarClientesList(); // aquí
   mostrarPedidos();
+
+  const clienteInput = document.getElementById("cliente");
+  const sugerenciasContainer = document.createElement("div");
+  sugerenciasContainer.id = "sugerenciasClientes";
+  sugerenciasContainer.style.position = "absolute";
+  sugerenciasContainer.style.zIndex = "1000";
+  sugerenciasContainer.style.background = "white";
+  sugerenciasContainer.style.border = "1px solid #ccc";
+  sugerenciasContainer.style.width = clienteInput.offsetWidth + "px";
+  sugerenciasContainer.style.maxHeight = "150px";
+  sugerenciasContainer.style.overflowY = "auto";
+  sugerenciasContainer.style.display = "none";
+
+  clienteInput.parentNode.insertBefore(sugerenciasContainer, clienteInput.nextSibling);
+
+  clienteInput.addEventListener("input", () => {
+    const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
+    const termino = clienteInput.value.toLowerCase();
+    sugerenciasContainer.innerHTML = "";
+
+    if (!termino) {
+      sugerenciasContainer.style.display = "none";
+      return;
+    }
+
+    const coincidencias = clientes.filter(c =>
+      c.nombre.toLowerCase().includes(termino)
+    );
+
+    if (coincidencias.length > 0) {
+      coincidencias.forEach(c => {
+        const div = document.createElement("div");
+        div.textContent = c.nombre;
+        div.style.padding = "5px";
+        div.style.cursor = "pointer";
+        div.addEventListener("click", () => {
+          clienteInput.value = c.nombre;
+          sugerenciasContainer.style.display = "none";
+        });
+        sugerenciasContainer.appendChild(div);
+      });
+    } else {
+      const div = document.createElement("div");
+      div.innerHTML = `<span style="color: gray">Cliente no encontrado.</span> <button style="margin-left: 10px; background-color: #5b2d90; color: white; border: none; padding: 5px; cursor: pointer;" onclick="window.location.href='clientes.html'">+ Agregar</button>`;
+      div.style.padding = "5px";
+      sugerenciasContainer.appendChild(div);
+    }
+
+    sugerenciasContainer.style.display = "block";
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!sugerenciasContainer.contains(e.target) && e.target !== clienteInput) {
+      sugerenciasContainer.style.display = "none";
+    }
+  });
 });
