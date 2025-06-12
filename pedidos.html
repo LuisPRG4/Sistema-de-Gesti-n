@@ -35,14 +35,14 @@
         <label>Selecciona el cliente:</label>
         <input type="text" id="cliente" list="clientesList" placeholder="Selecciona o escribe el nombre..." autocomplete="off">
         <datalist id="clientesList"></datalist>
-
-
         <label>Selecciona el producto:</label>
       <select id="producto"></select>
         <label>Ingresa la cantidad:</label>
       <input type="number" id="cantidad" placeholder="Cantidad">
         <label>Ingresa el precio por unidad:</label>
-      <input type="number" id="precioUnitario" placeholder="Precio Unitario">
+        
+      <input type="number" id="precioUnitario" placeholder="Precio Unitario" readonly>
+
       <button onclick="agregarPedido()">Agregar Pedido</button>
     </section>
 
@@ -50,8 +50,28 @@
       <h2>📋 Lista de Pedidos</h2>
       <ul id="listaPedidos"></ul>
     </section>
-  </main>
 
+    <button id="btnLimpiarPedidos" class="btn-limpiar-pedidos">
+      Limpiar todos los pedidos
+    </button>
+
+    <style>.btn-limpiar-pedidos {
+      background-color: #5b2d90;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 12px;
+      transition: background-color 0.3s ease;
+      }
+
+      .btn-limpiar-pedidos:hover {
+        background-color: #4a246f;
+      }
+    </style>
+  </main>
   <script src="js/pedidos.js"></script>
 
     <script>
@@ -59,11 +79,5 @@
       document.getElementById("navMenu").classList.toggle("open");
     }
     </script>
-
-    <script>
-  if (sessionStorage.getItem("sesionIniciada") !== "true") {
-    window.location.href = "login.html";
-  }
-</script>
 </body>
 </html>
