@@ -1,243 +1,103 @@
-let movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
-let indiceEditando = null;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Los SS - Finanzas</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="toastContainer" class="toast-container"></div>
+  <header>
+    <div class="header-container">
+      <img src="logo/Yogurt.png" alt="Logo" class="logo" />
+      <h1>💰 LOS SS - GESTIÓN FINANCIERA</h1>
+    </div>
+  </header>
 
-function guardarMovimientos() {
-  localStorage.setItem("movimientos", JSON.stringify(movimientos));
-}
+  <nav>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <ul id="navMenu">
+      <li><a href="index.html">🏠 Inicio</a></li>
+      <li><a href="inventario.html">🧃 Inventario</a></li>
+      <li><a href="pedidos.html">📦 Pedidos</a></li>
+      <li><a href="clientes.html">👥 Clientes</a></li>
+      <li><a href="finanzas.html" class="active">💰 Finanzas</a></li>
+      <li><a href="proveedores.html">🚚 Proveedores</a></li>
+      <li><a href="ventas.html">🧾 Ventas</a></li>
+      <li><a href="reportesGraficos.html">📊 Reportes</a></li>
+    </ul>
+  </nav>
 
-function agregarMovimiento() {
-  const tipo = document.getElementById("tipoMovimiento").value;
-  const monto = parseFloat(document.getElementById("monto").value);
-  const descripcion = document.getElementById("descripcion").value.trim();
-  const fecha = new Date().toLocaleDateString();
+  <main>
+    <section>
+      <h2>➕ Nuevo Movimiento</h2>
+      <label for="tipoMovimiento">Tipo de movimiento:</label>
+      <select id="tipoMovimiento">
+        <option value="Ingreso">Ingreso</option>
+        <option value="Gasto">Gasto</option>
+      </select>
 
+      <label for="monto">Monto ($):</label>
+      <input type="number" id="monto" placeholder="Monto" />
 
-  if (!isNaN(monto) && descripcion) {
-    if (indiceEditando !== null) {
-      // Editar movimiento existente
-      movimientos[indiceEditando] = { tipo, monto, descripcion, fecha };
-      mostrarToast("Movimiento editado ✏️");
-      indiceEditando = null;
-    } else {
-      // Agregar nuevo
-      movimientos.push({ tipo, monto, descripcion, fecha });
-      mostrarToast("Movimiento guardado 💸");
+      <label for="descripcion">Descripción:</label>
+      <input type="text" id="descripcion" placeholder="Descripción" />
+
+      <button onclick="agregarMovimiento()">Guardar Movimiento</button>
+      <button onclick="reiniciarMovimientos()" style="background:#e53e3e; color:white; margin-left:auto;">Reiniciar todo</button>
+    </section>
+
+    <section>
+      <h2>📊 Balance</h2>
+      <p id="balanceTotal">Balance total: $0.00</p>
+    </section>
+
+    <section id="resumenFinanciero" class="mt-4 p-4 rounded-lg border border-purple-300 bg-purple-50 shadow-sm">
+      <h2>📊 Resumen Financiero</h2>
+      <p><strong>Total Ingresos:</strong> $<span id="totalIngresos">0.00</span></p>
+      <p><strong>Total Gastos:</strong> $<span id="totalGastos">0.00</span></p>
+      <p><strong>📈 Ganancia Total:</strong> $<span id="gananciaTotal">0.00</span></p>
+      <p><strong>Movimiento más alto:</strong> <span id="movimientoMayor">-</span></p>
+    </section>
+
+    <section>
+      <h2>📉 Resumen Visual</h2>
+      <canvas id="graficoFinanzas" width="400" height="400"></canvas>
+    </section>
+
+    <section>
+      <h2>📅 Filtrar por Fecha</h2>
+      <label>Desde: <input type="date" id="fechaDesde"></label>
+      <label>Hasta: <input type="date" id="fechaHasta"></label>
+      <button onclick="filtrarPorFecha()">Aplicar Filtro</button>
+      <button onclick="limpiarFiltroFecha()">Limpiar</button>
+    </section>
+
+    <section>
+      <h2>🔍 Buscar Movimientos</h2>
+      <input type="text" id="buscadorMovimientos" placeholder="Buscar por descripción o tipo..." oninput="buscarMovimientos()" />
+    </section>
+
+    <section>
+      <h2>📋 Historial de Movimientos</h2>
+      <ul id="listaMovimientos"></ul>
+    </section>
+
+    <button onclick="exportarExcel()">📤 Exportar a Excel</button>
+  </main>
+
+  <script src="js/chart.js"></script>
+  <script src="js/finanzas.js"></script>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById("navMenu").classList.toggle("open");
     }
 
-    guardarMovimientos();
-    mostrarMovimientos();
-    mostrarResumenFinanciero();
-    document.getElementById("monto").value = "";
-    document.getElementById("descripcion").value = "";
-  } else {
-    mostrarToast("Completa todos los campos correctamente ⚠️");
-  }
-}
-
-function editarMovimiento(index) {
-  const mov = movimientos[index];
-  document.getElementById("tipoMovimiento").value = mov.tipo;
-  document.getElementById("monto").value = mov.monto;
-  document.getElementById("descripcion").value = mov.descripcion;
-  indiceEditando = index;
-  mostrarToast("Editando movimiento 📝");
-}
-
-
-function mostrarMovimientos(lista = movimientos) {
-  const listaElemento = document.getElementById("listaMovimientos");
-  const balance = document.getElementById("balanceTotal");
-  listaElemento.innerHTML = "";
-
-  let total = 0;
-
-  lista.forEach((mov, index) => {
-    total += mov.tipo === "Ingreso" ? mov.monto : -mov.monto;
-
-    const li = document.createElement("li");
-    li.innerHTML = `
-  <strong>${mov.tipo}:</strong> $${mov.monto.toFixed(2)} - ${mov.descripcion} (${mov.fecha})
-  <button onclick="editarMovimiento(${index})">✏️</button>
-  <button onclick="eliminarMovimiento(${index})">🗑️</button>
-  `;
-    listaElemento.appendChild(li);
-  });
-
-  balance.textContent = `Balance total: $${total.toFixed(2)}`;
-}
-
-
-function eliminarMovimiento(index) {
-  if (confirm("¿Eliminar este movimiento?")) {
-    movimientos.splice(index, 1);
-    guardarMovimientos();
-    mostrarMovimientos();
-    mostrarResumenFinanciero();
-    mostrarToast("Movimiento eliminado 🗑️");
-  }
-}
-
-function mostrarToast(mensaje) {
-  const toastContainer = document.getElementById("toastContainer");
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.textContent = mensaje;
-  toastContainer.appendChild(toast);
-
-  setTimeout(() => toast.classList.add("show"), 100);
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 400);
-  }, 3000);
-}
-
-function mostrarGrafico() {
-  const ingresos = movimientos.filter(m => m.tipo === "Ingreso").reduce((acc, m) => acc + m.monto, 0);
-  const gastos = movimientos.filter(m => m.tipo === "Gasto").reduce((acc, m) => acc + m.monto, 0);
-
-  const ctx = document.getElementById("graficoFinanzas").getContext("2d");
-
-  new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: ["Ingresos", "Gastos"],
-      datasets: [{
-        data: [ingresos, gastos],
-        backgroundColor: ["#38a169", "#e53e3e"],
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: "bottom",
-        }
-      }
+    if (sessionStorage.getItem("sesionIniciada") !== "true") {
+      window.location.href = "login.html";
     }
-  });
-}
-
-function exportarExcel() {
-  if (movimientos.length === 0) {
-    mostrarToast("No hay movimientos para exportar ⚠️");
-    return;
-  }
-
-  let csv = "Tipo,Monto,Descripción,Fecha\n";
-
-  movimientos.forEach(mov => {
-    csv += `${mov.tipo},${mov.monto},${mov.descripcion},"${mov.fecha}"\n`;
-  });
-
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.setAttribute("href", url);
-  link.setAttribute("download", "movimientos_financieros.csv");
-  link.style.display = "none";
-
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  mostrarToast("Movimientos exportados 🧾");
-}
-
-
-function filtrarPorFecha() {
-  const desde = document.getElementById("fechaDesde").value;
-  const hasta = document.getElementById("fechaHasta").value;
-
-  if (!desde || !hasta) {
-    mostrarToast("Por favor, selecciona ambas fechas para filtrar");
-    return;
-  }
-
-  const desdeDate = new Date(desde);
-  const hastaDate = new Date(hasta);
-
-  if (desdeDate > hastaDate) {
-    mostrarToast("La fecha 'Desde' debe ser menor o igual que la fecha 'Hasta'");
-    return;
-  }
-
-  const lista = document.getElementById("listaMovimientos");
-  lista.innerHTML = "";
-
-  let total = 0;
-
-  const filtrados = movimientos.filter(mov => {
-    const fechaMov = new Date(mov.fecha);
-    return fechaMov >= desdeDate && fechaMov <= hastaDate;
-  });
-
-  if (filtrados.length === 0) {
-    lista.innerHTML = "<li>No hay movimientos en ese rango de fechas.</li>";
-  } else {
-    filtrados.forEach((mov, index) => {
-      total += mov.tipo === "Ingreso" ? mov.monto : -mov.monto;
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <strong>${mov.tipo}:</strong> $${mov.monto.toFixed(2)} - ${mov.descripcion} (${mov.fecha})
-        <button onclick="eliminarMovimiento(${index})">🗑️</button>
-      `;
-      lista.appendChild(li);
-    });
-  }
-
-  document.getElementById("balanceTotal").textContent = `Balance total: $${total.toFixed(2)}`;
-}
-
-function limpiarFiltroFecha() {
-  document.getElementById("fechaDesde").value = "";
-  document.getElementById("fechaHasta").value = "";
-  mostrarMovimientos();
-}
-
-function buscarMovimientos() {
-  const texto = document.getElementById("buscadorMovimientos").value.toLowerCase();
-  const filtrados = movimientos.filter(mov => 
-    mov.descripcion.toLowerCase().includes(texto) || 
-    mov.tipo.toLowerCase().includes(texto)
-  );
-  mostrarMovimientos(filtrados);
-}
-
-function mostrarResumenFinanciero() {
-  let totalIngresos = 0;
-  let totalGastos = 0;
-  let totalGanancias = 0;
-  let mayor = null;
-
-  movimientos.forEach(mov => {
-    if (mov.tipo === "Ingreso") {
-      totalIngresos += mov.monto;
-      if (mov.ganancia) {
-        totalGanancias += mov.ganancia;
-      }
-    } else if (mov.tipo === "Gasto") {
-      totalGastos += mov.monto;
-    }
-
-    if (!mayor || mov.monto > mayor.monto) {
-      mayor = mov;
-    }
-  });
-
-  document.getElementById("totalIngresos").textContent = totalIngresos.toFixed(2);
-  document.getElementById("totalGastos").textContent = totalGastos.toFixed(2);
-  document.getElementById("gananciaTotal").textContent = totalGanancias.toFixed(2);
-  document.getElementById("movimientoMayor").textContent = mayor
-    ? `${mayor.tipo} de $${mayor.monto.toFixed(2)} (${mayor.descripcion})`
-    : "-";
-}
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  mostrarMovimientos();
-  mostrarGrafico();
-  mostrarResumenFinanciero();
-
-});
+  </script>
+</body>
+</html>
