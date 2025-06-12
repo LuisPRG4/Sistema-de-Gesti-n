@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pedidos - Los SS</title>
+  <title>Los SS - Pedidos</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
   <header>
     <div class="header-container">
         <img src="logo/Yogurt.png" alt="Logo" class="logo" />
-        <h1>📦 Gestión de Pedidos</h1>
+        <h1>📦 LOS SS - GESTIÓN DE PEDIDOS</h1>
     </div>
   </header>
 <nav>
@@ -35,6 +35,8 @@
         <label>Selecciona el cliente:</label>
         <input type="text" id="cliente" list="clientesList" placeholder="Selecciona o escribe el nombre..." autocomplete="off">
         <datalist id="clientesList"></datalist>
+
+
         <label>Selecciona el producto:</label>
       <select id="producto"></select>
         <label>Ingresa la cantidad:</label>
@@ -66,14 +68,12 @@
       margin-top: 12px;
       transition: background-color 0.3s ease;
       }
-
       .btn-limpiar-pedidos:hover {
         background-color: #4a246f;
       }
     </style>
   </main>
   <script src="js/pedidos.js"></script>
-
     <script>
       function toggleMenu() {
       document.getElementById("navMenu").classList.toggle("open");
