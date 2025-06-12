@@ -22,22 +22,27 @@ function agregarCliente() {
   mostrarToast("Cliente agregado 💼");
 }
 
+// FUNCIÓN ACTUALIZADA EL JUEVES 12 DE JUNIO DE 2025 PARA MEJORAR EL DISEÑO
 function mostrarClientes() {
   const lista = document.getElementById("listaClientes");
   lista.innerHTML = "";
 
   clientes.forEach((cliente, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <strong>${cliente.nombre}</strong><br>
-      Dirección: ${cliente.direccion}<br>
-      Tel: ${cliente.telefono}<br>
-      Email: ${cliente.email}<br>
-      <button onclick="eliminarCliente(${index})">Eliminar</button>
+    const card = document.createElement("div");
+    card.className = "cliente-card";
+
+    card.innerHTML = `
+      <h3>${cliente.nombre}</h3>
+      <p><strong>Dirección:</strong> ${cliente.direccion || "No especificada"}</p>
+      <p><strong>Teléfono:</strong> ${cliente.telefono || "No especificado"}</p>
+      <p><strong>Email:</strong> ${cliente.email || "No especificado"}</p>
+      <button onclick="eliminarCliente(${index})" class="btn-eliminar">Eliminar</button>
     `;
-    lista.appendChild(li);
+
+    lista.appendChild(card);
   });
 }
+
 
 function filtrarClientes() {
   const filtro = document.getElementById("buscadorClientes").value.toLowerCase();
@@ -72,6 +77,8 @@ function eliminarCliente(index) {
     mostrarToast("Cliente eliminado 🗑️");
   }
 }
+
+
 function limpiarFormulario() {
   document.getElementById("nombreCliente").value = "";
   document.getElementById("direccion").value = "";
