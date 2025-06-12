@@ -45,7 +45,7 @@
   </select>
 
   <label>Cantidad:</label>
-  <input type="number" id="cantidadVenta" min="1" value="1">
+  <input type="number" id="cantidadVenta" min="0" placeholder="Cantidad">
 
   <button onclick="agregarProductoAVenta()">➕ Agregar Producto</button>
 
@@ -84,8 +84,6 @@
 
   <!-- Crédito -->
   <div id="opcionesCredito" style="display: none;">
-    <label>Acreedor:</label>
-    <input type="text" id="acreedor" placeholder="Nombre del acreedor" />
     <label>Fecha Vencimiento:</label>
     <input type="date" id="fechaVencimiento" />
   </div>
