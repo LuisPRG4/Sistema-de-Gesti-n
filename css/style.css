@@ -14,7 +14,7 @@ body {
 }
 
 header {
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Antes 20px */
 
 }
 
@@ -194,6 +194,7 @@ nav a:hover {
   top: 20px;
   right: 20px;
   z-index: 9999;
+  pointer-events: none; /* no bloquea clics */
 }
 
 .toast {
@@ -260,7 +261,7 @@ nav a:hover {
   background-color: #5b2d90;
   color: white;
   padding: 10px 15px;
-  border-radius: 40px;
+  border-radius: 8px;
   text-align: center;
   margin-bottom: 10px;
 }
@@ -315,3 +316,180 @@ label {
 .sugerencias li:hover {
   background-color: #f0f0f0;
 }
+
+.pedido-card {
+  background-color: #f9f7fc;
+  border: 1px solid #ddd;
+  border-left: 5px solid #5b2d90;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 8px rgba(91, 45, 144, 0.1);
+  transition: transform 0.2s;
+}
+
+.pedido-card:hover {
+  transform: translateY(-2px);
+}
+
+/* MEJORAS DE DISEÑO PARA LAS LISTAS DE: PEDIDOS, CLIENTES, VENTAS, INVENTARIO Y PROVEEDORES */
+/* PEDIDOS */
+.pedido-card strong {
+  font-size: 1.1em;
+  color: #5b2d90;
+}
+
+.estado-select {
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95em;
+}
+
+.boton-eliminar {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  margin-top: 6px;
+  margin-left: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+}
+
+.boton-eliminar:hover {
+  background-color: #c0392b;
+}
+
+/* CLIENTES */
+#listaClientes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.cliente-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(91, 45, 144, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.cliente-card:hover {
+  transform: scale(1.02);
+}
+
+.cliente-card h3 {
+  margin-top: 0;
+  color: #5b2d90;
+  font-size: 1.2rem;
+}
+
+.cliente-card p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+}
+
+.btn-eliminar {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-eliminar:hover {
+  background-color: #c0392b;
+}
+
+/* INVENTARIO */
+#listaProductos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+.producto-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(91, 45, 144, 0.1);
+  transition: transform 0.2s ease;
+  text-align: justify;
+}
+
+.producto-card:hover {
+  transform: scale(1.02);
+}
+
+.producto-card h3 {
+  margin-top: 10px;
+  color: #5b2d90;
+  font-size: 1.1rem;
+}
+
+.producto-card p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+.producto-imagen {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.botones-producto {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-editar, .btn-eliminar {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-editar {
+  background-color: #5b2d90;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #4a237a;
+}
+
+.btn-eliminar {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background-color: #c0392b;
+}
+
+/* PROVEEDORES */
+
+/* VENTAS */
