@@ -1,10 +1,18 @@
+// Cargar pedidos y productos desde localStorage o iniciar vacíos
 let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
 
+// Guardar pedidos en localStorage
 function guardarPedidos() {
   localStorage.setItem("pedidos", JSON.stringify(pedidos));
 }
 
+// Guardar productos en localStorage (cuando se actualice stock)
+function guardarProductos() {
+  localStorage.setItem("productos", JSON.stringify(productos));
+}
+
+// Cargar productos para el <select> de productos
 function cargarProductos() {
   const select = document.getElementById("producto");
   select.innerHTML = "";
@@ -17,46 +25,72 @@ function cargarProductos() {
   });
 }
 
+// Agregar un nuevo pedido
 function agregarPedido() {
-
   const cliente = document.getElementById("cliente").value.trim();
   const indexProducto = parseInt(document.getElementById("producto").value);
   const cantidad = parseInt(document.getElementById("cantidad").value);
-  const precioUnitario = parseFloat(document.getElementById("precioUnitario").value);
 
-  if (!cliente) {
-    mostrarToast("Selecciona un cliente válido ⚠️");
-    return;
-  }
-
-  if (!cliente || isNaN(indexProducto) || isNaN(cantidad) || isNaN(precioUnitario)) {
+  // Validar campos
+  if (!cliente || isNaN(indexProducto) || isNaN(cantidad) || cantidad <= 0) {
     mostrarToast("Completa todos los campos correctamente ⚠️");
     return;
   }
 
   const producto = productos[indexProducto];
 
+  // Verificar stock suficiente
+  if (producto.stock < cantidad) {
+    mostrarToast("No hay suficiente stock disponible 😢");
+    return;
+  }
+
+  const precioUnitario = producto.precio;
+
+  // Descontar stock y guardar
+  productos[indexProducto].stock -= cantidad;
+  guardarProductos();
+
+  // Crear pedido con indexProducto para control futuro
   const pedido = {
     cliente,
     producto: producto.nombre,
     cantidad,
     precioUnitario,
-    total: cantidad * precioUnitario,
-    estado: "Pendiente"
+    total: producto.precio * cantidad,
+    estado: "Pendiente",
+    indexProducto
   };
 
   pedidos.push(pedido);
   guardarPedidos();
   mostrarPedidos();
 
-  mostrarToast("Pedido agregado 🧾");
+  mostrarToast("Pedido agregado y stock actualizado 🧾");
 
-  // Limpiar campos
+  // Limpiar inputs
   document.getElementById("cliente").value = "";
   document.getElementById("cantidad").value = "";
   document.getElementById("precioUnitario").value = "";
 }
 
+// Eliminar pedido y revertir stock solo si NO está entregado
+function eliminarPedido(index) {
+  const pedido = pedidos[index];
+  if (pedido.estado !== "Entregado") {
+    const indexProducto = pedido.indexProducto;
+    const cantidad = pedido.cantidad;
+    productos[indexProducto].stock += cantidad;
+    guardarProductos();
+  }
+  pedidos.splice(index, 1);
+  guardarPedidos();
+  mostrarPedidos();
+
+  mostrarToast("Pedido eliminado" + (pedido.estado !== "Entregado" ? " y stock revertido ❌" : " ❌"));
+}
+
+// Mostrar lista de pedidos en HTML
 function mostrarPedidos() {
   const lista = document.getElementById("listaPedidos");
   lista.innerHTML = "";
@@ -70,17 +104,20 @@ function mostrarPedidos() {
         <option ${p.estado === "Preparado" ? "selected" : ""}>Preparado</option>
         <option ${p.estado === "Entregado" ? "selected" : ""}>Entregado</option>
       </select>
+      <button onclick="eliminarPedido(${index})" style="margin-left:10px; background-color:#e74c3c; color:white; border:none; padding:5px; cursor:pointer;">Eliminar</button>
     `;
     lista.appendChild(li);
   });
 }
 
+// Cambiar estado del pedido
 function cambiarEstado(index, nuevoEstado) {
   pedidos[index].estado = nuevoEstado;
   guardarPedidos();
   mostrarToast(`Estado actualizado a "${nuevoEstado}" 🔄`);
 }
 
+// Mostrar mensaje tipo toast (notificación pequeña)
 function mostrarToast(mensaje) {
   const toastContainer = document.getElementById("toastContainer");
   const toast = document.createElement("div");
@@ -95,6 +132,7 @@ function mostrarToast(mensaje) {
   }, 3000);
 }
 
+// Cargar lista de clientes para autocompletar input
 function cargarClientesList() {
   const dataList = document.getElementById("clientesList");
   dataList.innerHTML = "";
@@ -106,65 +144,42 @@ function cargarClientesList() {
   });
 }
 
+// Limpiar todos los pedidos sin afectar stock (porque no modificamos stock aquí)
+function limpiarPedidos() {
+  pedidos = [];
+  guardarPedidos();
+  mostrarPedidos();
+  mostrarToast("Todos los pedidos borrados sin afectar inventario 🧹");
+}
 
+// Código que corre cuando la página termina de cargar (inicialización)
 document.addEventListener("DOMContentLoaded", () => {
   cargarProductos();
-  cargarClientesList(); // aquí
+  cargarClientesList();
   mostrarPedidos();
 
-  const clienteInput = document.getElementById("cliente");
-  const sugerenciasContainer = document.createElement("div");
-  sugerenciasContainer.id = "sugerenciasClientes";
-  sugerenciasContainer.style.position = "absolute";
-  sugerenciasContainer.style.zIndex = "1000";
-  sugerenciasContainer.style.background = "white";
-  sugerenciasContainer.style.border = "1px solid #ccc";
-  sugerenciasContainer.style.width = clienteInput.offsetWidth + "px";
-  sugerenciasContainer.style.maxHeight = "150px";
-  sugerenciasContainer.style.overflowY = "auto";
-  sugerenciasContainer.style.display = "none";
-
-  clienteInput.parentNode.insertBefore(sugerenciasContainer, clienteInput.nextSibling);
-
-  clienteInput.addEventListener("input", () => {
-    const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-    const termino = clienteInput.value.toLowerCase();
-    sugerenciasContainer.innerHTML = "";
-
-    if (!termino) {
-      sugerenciasContainer.style.display = "none";
-      return;
+  // Botón para limpiar todos los pedidos (sin afectar stock)
+  document.getElementById("btnLimpiarPedidos").addEventListener("click", () => {
+    if (confirm("¿Seguro quieres borrar todos los pedidos? Esto no afectará el inventario.")) {
+      limpiarPedidos();
     }
+  });
 
-    const coincidencias = clientes.filter(c =>
-      c.nombre.toLowerCase().includes(termino)
-    );
+  // Actualizar precio unitario y total al cambiar producto o cantidad
+  document.getElementById("producto").addEventListener("change", actualizarPrecioUnitario);
+  document.getElementById("cantidad").addEventListener("input", actualizarPrecioUnitario);
 
-    if (coincidencias.length > 0) {
-      coincidencias.forEach(c => {
-        const div = document.createElement("div");
-        div.textContent = c.nombre;
-        div.style.padding = "5px";
-        div.style.cursor = "pointer";
-        div.addEventListener("click", () => {
-          clienteInput.value = c.nombre;
-          sugerenciasContainer.style.display = "none";
-        });
-        sugerenciasContainer.appendChild(div);
-      });
+  function actualizarPrecioUnitario() {
+    const indexProducto = parseInt(document.getElementById("producto").value);
+    const cantidad = parseInt(document.getElementById("cantidad").value);
+    const precioInput = document.getElementById("precioUnitario");
+
+    if (!isNaN(indexProducto) && !isNaN(cantidad) && cantidad > 0) {
+      const producto = productos[indexProducto];
+      const total = producto.precio * cantidad;
+      precioInput.value = total.toFixed(2);
     } else {
-      const div = document.createElement("div");
-      div.innerHTML = `<span style="color: gray">Cliente no encontrado.</span> <button style="margin-left: 10px; background-color: #5b2d90; color: white; border: none; padding: 5px; cursor: pointer;" onclick="window.location.href='clientes.html'">+ Agregar</button>`;
-      div.style.padding = "5px";
-      sugerenciasContainer.appendChild(div);
+      precioInput.value = "";
     }
-
-    sugerenciasContainer.style.display = "block";
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!sugerenciasContainer.contains(e.target) && e.target !== clienteInput) {
-      sugerenciasContainer.style.display = "none";
-    }
-  });
+  }
 });
