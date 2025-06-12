@@ -77,11 +77,17 @@ function agregarPedido() {
 // Eliminar pedido y revertir stock solo si NO está entregado
 function eliminarPedido(index) {
   const pedido = pedidos[index];
+  if (!pedido) return; // prevención por si el índice es inválido
+
   if (pedido.estado !== "Entregado") {
-    const indexProducto = pedido.indexProducto;
-    const cantidad = pedido.cantidad;
-    productos[indexProducto].stock += cantidad;
-    guardarProductos();
+    // Busca el producto por nombre, no por índice
+    const productoEncontrado = productos.find(p => p.nombre === pedido.producto);
+    if (productoEncontrado) {
+      productoEncontrado.stock += pedido.cantidad;
+      guardarProductos();
+    } else {
+      console.warn("Producto no encontrado para revertir stock:", pedido.producto);
+    }
   }
   pedidos.splice(index, 1);
   guardarPedidos();
@@ -90,22 +96,29 @@ function eliminarPedido(index) {
   mostrarToast("Pedido eliminado" + (pedido.estado !== "Entregado" ? " y stock revertido ❌" : " ❌"));
 }
 
-// Mostrar lista de pedidos en HTML
+
+// NUEVA FUNCIÓN PARA MEJORAR EL DISEÑO DE LA LISTA
 function mostrarPedidos() {
   const lista = document.getElementById("listaPedidos");
   lista.innerHTML = "";
 
   pedidos.forEach((p, index) => {
     const li = document.createElement("li");
+    li.className = "pedido-card"; // clase moderna
+
     li.innerHTML = `
-      <strong>${p.cliente}</strong> - ${p.producto} x ${p.cantidad} = $${p.total.toFixed(2)}
-      <br>Estado: <select onchange="cambiarEstado(${index}, this.value)">
+      <strong>${p.cliente}</strong><br>
+      ${p.producto} x ${p.cantidad} = <strong>$${p.total.toFixed(2)}</strong>
+      <br>
+      Estado: 
+      <select class="estado-select" onchange="cambiarEstado(${index}, this.value)">
         <option ${p.estado === "Pendiente" ? "selected" : ""}>Pendiente</option>
         <option ${p.estado === "Preparado" ? "selected" : ""}>Preparado</option>
         <option ${p.estado === "Entregado" ? "selected" : ""}>Entregado</option>
       </select>
-      <button onclick="eliminarPedido(${index})" style="margin-left:10px; background-color:#e74c3c; color:white; border:none; padding:5px; cursor:pointer;">Eliminar</button>
+      <button onclick="eliminarPedido(${index})" class="boton-eliminar">Eliminar</button>
     `;
+
     lista.appendChild(li);
   });
 }
