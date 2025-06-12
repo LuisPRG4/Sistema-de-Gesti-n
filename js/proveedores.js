@@ -9,17 +9,17 @@ function agregarProveedor() {
   const empresa = document.getElementById("empresa").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const productos = document.getElementById("productos").value.trim();
-  
-  
-  if (nombre && empresa && telefono && productos) {
-    proveedores.push({ nombre, empresa, telefono, productos });
-    guardarProveedores();
-    mostrarProveedores();
-    limpiarFormulario();
-    mostrarToast("Proveedor agregado con éxito 🚚");
-  } else {
-    alert("Completa todos los campos.");
+
+  if (!nombre) {
+    mostrarToast("El nombre del proveedor es obligatorio ⚠️");
+    return;
   }
+
+  proveedores.push({ nombre, empresa, telefono, productos });
+  guardarProveedores();
+  mostrarProveedores();
+  limpiarFormulario();
+  mostrarToast("Proveedor agregado con éxito 🚚");
 }
 
 function mostrarProveedores(filtrados = proveedores) {
