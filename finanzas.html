@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-    <div id="toastContainer" class="toast-container"></div>
+  <div id="toastContainer" class="toast-container"></div>
   <header>
     <div class="header-container">
       <img src="logo/Yogurt.png" alt="Logo" class="logo" />
@@ -16,34 +16,36 @@
   </header>
 
   <nav>
-  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-  <ul id="navMenu">
-    <li><a href="index.html">🏠 Inicio</a></li>
-    <li><a href="inventario.html">🧃 Inventario</a></li>
-    <li><a href="pedidos.html">📦 Pedidos</a></li>
-    <li><a href="clientes.html">👥 Clientes</a></li>
-    <li><a href="finanzas.html">💰 Finanzas</a></li>
-    <li><a href="proveedores.html">🚚 Proveedores</a></li>
-    <li><a href="ventas.html">🧾 Ventas</a></li>
-    <li><a href="reportesGraficos.html">📊 Reportes</a></li>
-  </ul>
-</nav>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <ul id="navMenu">
+      <li><a href="index.html">🏠 Inicio</a></li>
+      <li><a href="inventario.html">🧃 Inventario</a></li>
+      <li><a href="pedidos.html">📦 Pedidos</a></li>
+      <li><a href="clientes.html">👥 Clientes</a></li>
+      <li><a href="finanzas.html" class="active">💰 Finanzas</a></li>
+      <li><a href="proveedores.html">🚚 Proveedores</a></li>
+      <li><a href="ventas.html">🧾 Ventas</a></li>
+      <li><a href="reportesGraficos.html">📊 Reportes</a></li>
+    </ul>
+  </nav>
 
   <main>
     <section>
       <h2>➕ Nuevo Movimiento</h2>
       <label for="tipoMovimiento">Tipo de movimiento:</label>
       <select id="tipoMovimiento">
-        
         <option value="Ingreso">Ingreso</option>
         <option value="Gasto">Gasto</option>
       </select>
-      <label for="monto">Monto:</label>
+
+      <label for="monto">Monto ($):</label>
       <input type="number" id="monto" placeholder="Monto" />
 
       <label for="descripcion">Descripción:</label>
       <input type="text" id="descripcion" placeholder="Descripción" />
+
       <button onclick="agregarMovimiento()">Guardar Movimiento</button>
+      <button onclick="reiniciarMovimientos()" style="background:#e53e3e; color:white; margin-left:auto;">Reiniciar todo</button>
     </section>
 
     <section>
@@ -73,31 +75,29 @@
     </section>
 
     <section>
-        <h2>🔍 Buscar Movimientos</h2>
-        <input type="text" id="buscadorMovimientos" placeholder="Buscar por descripción o tipo..." oninput="buscarMovimientos()" />
-  
+      <h2>🔍 Buscar Movimientos</h2>
+      <input type="text" id="buscadorMovimientos" placeholder="Buscar por descripción o tipo..." oninput="buscarMovimientos()" />
+    </section>
+
+    <section>
       <h2>📋 Historial de Movimientos</h2>
       <ul id="listaMovimientos"></ul>
     </section>
 
     <button onclick="exportarExcel()">📤 Exportar a Excel</button>
-
   </main>
 
   <script src="js/chart.js"></script>
   <script src="js/finanzas.js"></script>
 
-    <script>
-        function toggleMenu() {
-        document.getElementById("navMenu").classList.toggle("open");
+  <script>
+    function toggleMenu() {
+      document.getElementById("navMenu").classList.toggle("open");
     }
-    </script>
 
-    <script>
-  if (sessionStorage.getItem("sesionIniciada") !== "true") {
-    window.location.href = "login.html";
-  }
-</script>
-
+    if (sessionStorage.getItem("sesionIniciada") !== "true") {
+      window.location.href = "login.html";
+    }
+  </script>
 </body>
 </html>
