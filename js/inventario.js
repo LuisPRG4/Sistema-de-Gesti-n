@@ -27,13 +27,23 @@ function mostrarProductos(filtrados = productos) {
 
 function guardarProducto() {
   const nombre = document.getElementById("nombre").value.trim();
-  const stock = parseInt(document.getElementById("stock").value);
-  const vendidos = parseInt(document.getElementById("vendidos").value);
-  const costo = parseFloat(document.getElementById("costo").value);
-  const precio = parseFloat(document.getElementById("precio").value);
+  const stock = parseInt(document.getElementById("stock").value) || 0;
+  const vendidos = parseInt(document.getElementById("vendidos").value) || 0;
+  const costo = parseFloat(document.getElementById("costo").value) || 0;
+  const precio = parseFloat(document.getElementById("precio").value) || 0;
   const proveedor = document.getElementById("proveedor").value.trim();
   const imagenInput = document.getElementById("imagen");
   const archivo = imagenInput.files[0];
+
+  if (!nombre) {
+    mostrarToast("El nombre del producto es obligatorio ⚠️", "error");
+    return;
+  }
+
+  if (stock < 0 || vendidos < 0 || costo < 0 || precio < 0) {
+    mostrarToast("Los valores no pueden ser negativos ⚠️", "error");
+    return;
+  }
 
   if (archivo) {
     const lector = new FileReader();
@@ -46,42 +56,50 @@ function guardarProducto() {
     const imagenBase64 = editIndex !== null ? productos[editIndex].imagen : "";
     guardarProductoFinal(nombre, stock, vendidos, costo, precio, imagenBase64, proveedor);
   }
-
-  // Validación después de llamar a guardarProductoFinal no es efectiva, la movemos arriba
-  if (!nombre || isNaN(stock) || isNaN(vendidos) || isNaN(costo) || isNaN(precio) || stock < 0 || vendidos < 0 || costo < 0 || precio < 0) {
-    mostrarToast("Completa todos los campos correctamente ⚠️");
-    return;
-  }
 }
 
 function guardarProductoFinal(nombre, stock, vendidos, costo, precio, imagen, proveedor) {
-  if (
-    nombre &&
-    !isNaN(stock) &&
-    !isNaN(vendidos) &&
-    !isNaN(costo) &&
-    !isNaN(precio)
-  ) {
-    const nuevoProducto = { nombre, stock, vendidos, costo, precio, imagen, proveedor };
-
-    if (editIndex === null) {
-      productos.push(nuevoProducto);
-      mostrarToast("Producto guardado ✅");
-    } else {
-      productos[editIndex] = nuevoProducto;
-      editIndex = null;
-      document.getElementById("btnGuardar").textContent = "Guardar";
-      mostrarToast("Producto actualizado ✏️");
-    }
-
-    guardarProductos();
-    mostrarProductos();
-    limpiarCampos();
-  } else {
-    mostrarToast("Completa todos los campos correctamente ⚠️");
+  if (!nombre) {
+    mostrarToast("El nombre del producto es obligatorio ⚠️");
+    return;
   }
-}
 
+  // Aseguramos que valores vacíos o inválidos se conviertan en 0
+  stock = isNaN(stock) ? 0 : stock;
+  vendidos = isNaN(vendidos) ? 0 : vendidos;
+  costo = isNaN(costo) ? 0 : costo;
+  precio = isNaN(precio) ? 0 : precio;
+
+  // Validamos que no haya valores negativos
+  if (stock < 0 || vendidos < 0 || costo < 0 || precio < 0) {
+    mostrarToast("Los valores no pueden ser negativos ⚠️");
+    return;
+  }
+
+  const nuevoProducto = {
+    nombre,
+    stock,
+    vendidos,
+    costo,
+    precio,
+    imagen,
+    proveedor
+  };
+
+  if (editIndex === null) {
+    productos.push(nuevoProducto);
+    mostrarToast("Producto guardado ✅");
+  } else {
+    productos[editIndex] = nuevoProducto;
+    editIndex = null;
+    document.getElementById("btnGuardar").textContent = "Guardar";
+    mostrarToast("Producto actualizado ✏️");
+  }
+
+  guardarProductos();
+  mostrarProductos();
+  limpiarCampos();
+}
 
 function cargarProducto(index) {
   const producto = productos[index];
@@ -157,8 +175,6 @@ function cargarProveedores() {
     select.appendChild(option);
   });
 }
-
-
 document.addEventListener("DOMContentLoaded", () => {
   mostrarProductos();
   cargarProveedores();
