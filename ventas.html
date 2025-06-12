@@ -94,6 +94,17 @@
     <section>
       <h2>📋 Historial de Ventas</h2>
       <input type="text" id="buscadorVentas" placeholder="🔍 Buscar ventas..." oninput="filtrarVentas()" />
+
+      <div style="margin-top: 1rem;">
+        <button id="btnExportar" onclick="toggleExportOptions()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+          ⬇️ Exportar
+        </button>
+    <div id="opcionesExportacion" style="display: none; margin-top: 0.5rem;">
+        <button onclick="exportarExcel()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md mr-2">📊 Exportar a Excel</button>
+        <button onclick="exportarPDF()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md">📄 Exportar a PDF</button>
+      </div>
+    </div>
+
       <div id="listaVentas" class="mt-4 space-y-4"></div>
     </section>
   </main>
