@@ -1,3 +1,5 @@
+// ventas.js corregido y mejorado por mami 💜
+
 const clientes = JSON.parse(localStorage.getItem("clientes")) || []; 
 let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
@@ -326,6 +328,82 @@ function actualizarTablaProductos() {
 function eliminarProductoVenta(index) {
   productosVenta.splice(index, 1);
   actualizarTablaProductos();
+}
+
+function toggleExportOptions() {
+  const opciones = document.getElementById("opcionesExportacion");
+  opciones.style.display = opciones.style.display === "none" ? "block" : "none";
+}
+
+function exportarExcel() {
+  const data = ventas.map(venta => ({
+    Cliente: venta.cliente,
+    Productos: venta.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", "),
+    Ingreso: venta.ingreso.toFixed(2),
+    Ganancia: venta.ganancia.toFixed(2),
+    Fecha: venta.fecha,
+    Pago: venta.tipoPago,
+    Detalle: venta.tipoPago === "contado" ? venta.detallePago.metodo : `Vence: ${venta.detallePago.fechaVencimiento}`
+  }));
+
+  let csv = "Cliente,Productos,Ingreso,Ganancia,Fecha,Pago,Detalle\n";
+  data.forEach(row => {
+    csv += `${row.Cliente},"${row.Productos}",${row.Ingreso},${row.Ganancia},${row.Fecha},${row.Pago},"${row.Detalle}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "ventas.csv";
+  link.click();
+  mostrarToast("📊 Excel exportado");
+}
+
+function exportarPDF() {
+  const ventana = window.open('', '_blank');
+  let contenido = `
+    <html>
+      <head><title>Reporte de Ventas</title></head>
+      <body>
+        <h2 style="color:#5b2d90;">📋 Historial de Ventas</h2>
+        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+          <tr>
+            <th>Cliente</th>
+            <th>Productos</th>
+            <th>Ingreso</th>
+            <th>Ganancia</th>
+            <th>Fecha</th>
+            <th>Pago</th>
+            <th>Detalle</th>
+          </tr>`;
+
+  ventas.forEach(venta => {
+    const productos = venta.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", ");
+    const detalle = venta.tipoPago === "contado"
+      ? venta.detallePago.metodo
+      : `Vence: ${venta.detallePago.fechaVencimiento}`;
+    contenido += `
+          <tr>
+            <td>${venta.cliente}</td>
+            <td>${productos}</td>
+            <td>$${venta.ingreso.toFixed(2)}</td>
+            <td>$${venta.ganancia.toFixed(2)}</td>
+            <td>${venta.fecha}</td>
+            <td>${venta.tipoPago}</td>
+            <td>${detalle}</td>
+          </tr>`;
+  });
+
+  contenido += `
+        </table>
+      </body>
+    </html>`;
+
+  ventana.document.write(contenido);
+  ventana.document.close();
+  ventana.print();
+  mostrarToast("📄 PDF preparado para impresión");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
