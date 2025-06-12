@@ -492,4 +492,72 @@ label {
 
 /* PROVEEDORES */
 
+
+
 /* VENTAS */
+
+
+
+
+/* FINANZAS */
+/* Contenedor de cada movimiento tipo tarjeta */
+.movimiento-item {
+  background: #f5f3fa; /* color muy suave, casi blanco con tono lavanda */
+  border: 1.5px solid #8b6fc1; /* borde morado suave */
+  border-radius: 12px;
+  padding: 15px 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(91, 45, 144, 0.15);
+  transition: box-shadow 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.movimiento-item:hover {
+  box-shadow: 0 6px 12px rgba(91, 45, 144, 0.35);
+}
+
+/* Tipo de movimiento destacado */
+.movimiento-item strong {
+  color: #5b2d90;
+  font-size: 1.15rem;
+}
+
+/* Descripción en cursiva y con color gris oscuro */
+.movimiento-item em {
+  color: #4a4a4a;
+  font-style: italic;
+  display: block;
+  margin: 6px 0 8px;
+}
+
+/* Fecha pequeña y clara */
+.movimiento-item small {
+  color: #7a7a7a;
+  font-size: 0.85rem;
+}
+
+/* Botones estilo moderno */
+.movimiento-item button {
+  background-color: #6b46c1;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin-right: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.movimiento-item button.btn-eliminar {
+  background-color: #e53e3e;
+}
+
+.movimiento-item button:hover {
+  background-color: #4a2a84;
+}
+
+.movimiento-item button.btn-eliminar:hover {
+  background-color: #b2302b;
+}
