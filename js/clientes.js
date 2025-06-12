@@ -10,15 +10,16 @@ function agregarCliente() {
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
 
-  if (nombre && direccion && telefono && email) {
-    clientes.push({ nombre, direccion, telefono, email });
-    guardarClientes();
-    mostrarClientes();
-    limpiarFormulario();
-    mostrarToast("Cliente agregado 💼");
-  } else {
-    mostrarToast("Completa todos los campos ⚠️");
+  if (!nombre) {
+    mostrarToast("El nombre del cliente es obligatorio ⚠️");
+    return;
   }
+
+  clientes.push({ nombre, direccion, telefono, email });
+  guardarClientes();
+  mostrarClientes();
+  limpiarFormulario();
+  mostrarToast("Cliente agregado 💼");
 }
 
 function mostrarClientes() {
@@ -71,8 +72,6 @@ function eliminarCliente(index) {
     mostrarToast("Cliente eliminado 🗑️");
   }
 }
-
-
 function limpiarFormulario() {
   document.getElementById("nombreCliente").value = "";
   document.getElementById("direccion").value = "";
