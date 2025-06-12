@@ -46,13 +46,8 @@ function registrarVenta() {
     }
     detallePago = { metodo };
   } else if (tipoPago === "credito") {
-    const acreedor = document.getElementById("acreedor").value.trim();
-    const fechaVencimiento = document.getElementById("fechaVencimiento").value;
-    if (!acreedor || !fechaVencimiento) {
-      alert("Completa los datos de crédito.");
-      return;
-    }
-    detallePago = { acreedor, fechaVencimiento };
+    const fechaVencimiento = document.getElementById("fechaVencimiento").value || "No especificada";
+    detallePago = { acreedor: cliente, fechaVencimiento };
   }
 
   let ingreso = 0;
@@ -291,6 +286,11 @@ function agregarProductoAVenta() {
   }
 
   actualizarTablaProductos();
+
+  // 👇 Limpia los campos al finalizar
+  document.getElementById("productoVenta").value = "";
+  document.getElementById("cantidadVenta").value = "";
+
 }
 
 function actualizarTablaProductos() {
