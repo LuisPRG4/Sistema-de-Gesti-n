@@ -10,18 +10,24 @@ function mostrarProductos(filtrados = productos) {
   lista.innerHTML = "";
 
   filtrados.forEach((producto, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <img src="${producto.imagen || 'https://via.placeholder.com/50'}" width="50" style="vertical-align:middle" />
-      <strong>${producto.nombre}</strong> - Stock: ${producto.stock}, Vendidos: ${producto.vendidos}, 
-      Proveedor: ${producto.proveedor || 'N/A'},
-      Costo: $${producto.costo ? producto.costo.toFixed(2) : '0.00'}, 
-      Precio: $${producto.precio ? producto.precio.toFixed(2) : '0.00'}
-      <br>
-      <button onclick="cargarProducto(${index})">✏️ Editar</button>
-      <button onclick="eliminarProducto(${index})">🗑️ Eliminar</button>
+    const card = document.createElement("div");
+    card.className = "producto-card";
+
+    card.innerHTML = `
+      <img src="${producto.imagen || 'https://via.placeholder.com/80'}" alt="Imagen" class="producto-imagen" />
+      <h3>${producto.nombre}</h3>
+      <p><strong>Stock:</strong> ${producto.stock}</p>
+      <p><strong>Vendidos:</strong> ${producto.vendidos}</p>
+      <p><strong>Proveedor:</strong> ${producto.proveedor || "N/A"}</p>
+      <p><strong>Costo:</strong> $${producto.costo?.toFixed(2) || "0.00"}</p>
+      <p><strong>Precio:</strong> $${producto.precio?.toFixed(2) || "0.00"}</p>
+      <div class="botones-producto">
+        <button onclick="cargarProducto(${index})" class="btn-editar">✏️ Editar</button>
+        <button onclick="eliminarProducto(${index})" class="btn-eliminar">🗑️ Eliminar</button>
+      </div>
     `;
-    lista.appendChild(li);
+
+    lista.appendChild(card);
   });
 }
 
