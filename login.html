@@ -2,17 +2,78 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Sistema de Ventas</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f4f4f8;
+    }
+
+    main {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.75rem;
+      background: #5b2d90;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #452172;
+    }
+
+    #error {
+      color: red;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 500px) {
+      main {
+        margin: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <main>
     <section>
-      <h2>🔐 Iniciar Sesión</h2>
+      <h2 style="text-align:center">🔐 Iniciar Sesión</h2>
       <input type="text" id="usuario" placeholder="Usuario">
       <input type="password" id="contrasena" placeholder="Contraseña">
       <button onclick="iniciarSesion()">Entrar</button>
-      <p id="error" style="color: red;"></p>
+      <p id="error"></p>
     </section>
   </main>
 
