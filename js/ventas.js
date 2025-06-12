@@ -1,5 +1,3 @@
-// ventas.js corregido y mejorado por mami 💜
-
 const clientes = JSON.parse(localStorage.getItem("clientes")) || []; 
 let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
@@ -127,29 +125,41 @@ function mostrarVentas(filtradas = ventas) {
   const lista = document.getElementById("listaVentas");
   lista.innerHTML = "";
 
-  filtradas.forEach((venta, index) => {
-    let detalle = "";
-    if (venta.tipoPago === "contado") {
-      detalle = `Método: ${venta.detallePago.metodo}`;
-    } else {
-      detalle = `Acreedor: ${venta.detallePago.acreedor}<br>Vence: ${venta.detallePago.fechaVencimiento}`;
-    }
+  if (filtradas.length === 0) {
+    lista.innerHTML = `<p class="text-center text-gray-400">No hay ventas registradas.</p>`;
+    return;
+  }
 
+  filtradas.forEach((venta, index) => {
     const productosTexto = venta.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", ");
 
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <strong>${venta.cliente}</strong><br>
-      Productos: ${productosTexto}<br>
-      Total: $${venta.ingreso.toFixed(2)}<br>
-      Pago: ${venta.tipoPago}<br>
-      ${detalle}<br>
-      <button onclick="cargarVenta(${index})">✏️ Editar</button>
-      <button onclick="revertirVenta(${index})">↩️ Revertir</button>
+    const detallePago =
+      venta.tipoPago === "contado"
+        ? `<span class="text-sm text-gray-600">Método: ${venta.detallePago.metodo}</span>`
+        : `<span class="text-sm text-gray-600">Acreedor: ${venta.detallePago.acreedor || "N/A"}<br>Vence: ${venta.detallePago.fechaVencimiento || "Sin fecha"}</span>`;
+
+    const card = document.createElement("div");
+    card.className = "bg-white border border-purple-200 rounded-2xl p-4 shadow-md";
+
+    card.innerHTML = `
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="text-lg font-semibold text-purple-700">${venta.cliente}</h3>
+        <span class="text-sm text-gray-500">${venta.fecha}</span>
+      </div>
+      <p class="text-sm text-gray-800"><strong>Productos:</strong> ${productosTexto}</p>
+      <p class="text-sm text-gray-800"><strong>Total:</strong> $${venta.ingreso.toFixed(2)}</p>
+      <p class="text-sm text-gray-800"><strong>Pago:</strong> ${venta.tipoPago}</p>
+      ${detallePago}
+      <div class="mt-3 flex gap-2">
+        <button onclick="cargarVenta(${index})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md text-sm transition">✏️ Editar</button>
+        <button onclick="revertirVenta(${index})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition">↩️ Revertir</button>
+      </div>
     `;
-    lista.appendChild(li);
+
+    lista.appendChild(card);
   });
 }
+
 
 function filtrarVentas() {
   const filtro = document.getElementById("buscadorVentas").value.toLowerCase();
@@ -165,10 +175,9 @@ function filtrarVentas() {
 function limpiarFormulario() {
   document.getElementById("clienteVenta").value = "";
   document.getElementById("productoVenta").value = "";
-  document.getElementById("montoVenta").value = "";
+  // document.getElementById("montoVenta").value = "";
   document.getElementById("tipoPago").value = "";
   document.getElementById("metodoContado").value = "";
-  document.getElementById("acreedor").value = "";
   document.getElementById("fechaVencimiento").value = "";
   productosVenta = [];
   actualizarTablaProductos();
