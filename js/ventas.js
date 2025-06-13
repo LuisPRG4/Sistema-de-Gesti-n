@@ -1,5 +1,3 @@
-// ventas.js corregido y mejorado por mami 💜
-
 const clientes = JSON.parse(localStorage.getItem("clientes")) || []; 
 let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
