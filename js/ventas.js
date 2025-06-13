@@ -155,6 +155,7 @@ function mostrarVentas(filtradas = ventas) {
       <div class="mt-3 flex gap-2">
         <button onclick="cargarVenta(${index})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md text-sm transition">✏️ Editar</button>
         <button onclick="revertirVenta(${index})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition">↩️ Revertir</button>
+        <button onclick="eliminarVenta(${index})" class="bg-gray-500 hover:bg-gray-700 text-white px-3 py-1 rounded-md text-sm transition">🗑 Eliminar</button>
       </div>
     `;
 
@@ -227,6 +228,31 @@ function revertirVenta(index) {
     mostrarToast("Venta revertida y stock actualizado");
   }
 }
+
+//NUEVA FUNCIÓN
+function eliminarVenta(index) {
+  const venta = ventas[index];
+  if (!venta) return;
+
+  if (!confirm(`¿Estás seguro de eliminar la venta a ${venta.cliente} sin revertir stock?`)) return;
+
+  // Añadir movimiento de ajuste en Finanzas
+  const movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
+  movimientos.push({
+    tipo: "ajuste",
+    monto: -venta.ingreso,
+    ganancia: -venta.ganancia,
+    fecha: new Date().toISOString().split("T")[0],
+    descripcion: `Eliminación manual de venta a ${venta.cliente}`
+  });
+  localStorage.setItem("movimientos", JSON.stringify(movimientos));
+
+  ventas.splice(index, 1);
+  guardarVentas();
+  mostrarVentas();
+  mostrarToast("Venta eliminada permanentemente 🗑️");
+}
+
 
 function cargarVenta(index) {
   const venta = ventas[index];
