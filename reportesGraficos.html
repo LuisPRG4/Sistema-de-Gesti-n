@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Los SS - Reportes</title>
+  <link rel="icon" type="image/png" href="fav/los ss.png">
   <link rel="stylesheet" href="css/style.css">
   <script src="js/chart.js"></script>
 </head>
@@ -29,6 +30,7 @@
     <li><a href="reportesGraficos.html">📊 Reportes</a></li>
   </ul>
 </nav>
+
   <main>
       <section>
         <button onclick="exportarVentasExcel()">📥 Exportar a Excel</button>
@@ -43,22 +45,27 @@
         <h2>🍹 Productos Más Vendidos</h2>
         <canvas id="graficoProducto" width="400" height="400"></canvas>
       </section>
+
       <section>
         <h2>👤 Ventas por Cliente</h2>
         <canvas id="graficoCliente" width="400" height="400"></canvas>
       </section>
   </main>
+
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="js/reportes.js"></script>
+
     <script>
       function toggleMenu() {
       document.getElementById("navMenu").classList.toggle("open");
     }
     </script>
+
     <script>
   if (sessionStorage.getItem("sesionIniciada") !== "true") {
     window.location.href = "login.html";
   }
 </script>
+
 </body>
 </html>
