@@ -7,7 +7,7 @@
 
 /* General */
 body {
-  font-family: Edu NSW ACT Hand Pre;
+  font-family: 'Segoe UI', sans-serif;
   background-color: #fdfdfd;
   color: #333;
   padding: 20px;
@@ -22,7 +22,7 @@ header h1 {
   font-size: 2rem;
   color: #5b2d90;
   margin-bottom: 10px;
-  font-family: "Damion", cursive !important;
+  font-family: "Handlee", cursive !important;
 }
 
 .header-container {
