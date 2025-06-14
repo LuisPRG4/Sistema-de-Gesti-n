@@ -111,7 +111,7 @@ function registrarVenta() {
     });
     localStorage.setItem("movimientos", JSON.stringify(movimientos));
 
-    mostrarToast("Venta registrada con éxito");
+    mostrarToast("Venta registrada con éxito ✅");
   }
 
   productos = productosActualizados;
