@@ -56,9 +56,28 @@
 
     <section id="resumenFinanciero" class="mt-4 p-4 rounded-lg border border-purple-300 bg-purple-50 shadow-sm">
       <h2>📊 Resumen Financiero</h2>
+      <!-- NUEVO DISEÑO DE RESUMEN FINANCIERO (13/06/2025) -->
+
+    <div class="bg-purple-100 rounded-xl p-4 mt-4 text-purple-900 shadow-sm space-y-2">
+  
       <p><strong>Total Ingresos:</strong> $<span id="totalIngresos">0.00</span></p>
+
       <p><strong>Total Gastos:</strong> $<span id="totalGastos">0.00</span></p>
+
+      <!-- NUEVAS LÍNEAS AÑADIDAS (13/05/2025) PARA MOSTRAR EL TOTAL DE COSTOS -->
+      <p id="gastoExtraExplicacion" class="text-sm text-gray-500 mt-1"></p>
+
       <p><strong>📈 Ganancia Total:</strong> $<span id="gananciaTotal">0.00</span></p>
+
+      <!-- NUEVAS LÍNEAS AÑADIDAS (13/05/2025) PARA MOSTRAR EL TOTAL DE PRECIOS -->
+      <p><strong>💰 Ganancia Potencial Inventario:</strong> $<span id="gananciaPotencial">0.00</span></p>
+
+    <!-- BALANCE FINAL (calculo: ingresos - gastos + ganancia potencial) -->
+    <p id="balanceTotal" class="font-semibold mt-2"></p>
+
+</div>
+
+
       <p><strong>Movimiento más alto:</strong> <span id="movimientoMayor">-</span></p>
     </section>
 
