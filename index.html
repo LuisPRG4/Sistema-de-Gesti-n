@@ -15,30 +15,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
-  
+
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-    <div id="toastContainer" class="toast-container"></div>
+  <div id="toastContainer" class="toast-container"></div>
+
   <header>
-      <div class="header-container">
-        <img src="logo/Yogurt.png" alt="Logo" class="logo" />
-        <h1>🏡INICIO</h1>
-      </div>
+    <div class="header-container">
+      <img src="logo/Yogurt.png" alt="Logo" class="logo" />
+      <h1>🏡INICIO</h1>
+    </div>
   </header>
+
   <nav>
-  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-  <ul id="navMenu">
-    <li><a href="index.html">🏠 Inicio</a></li>
-    <li><a href="inventario.html">🧃 Inventario</a></li>
-    <li><a href="pedidos.html">📦 Pedidos</a></li>
-    <li><a href="clientes.html">👥 Clientes</a></li>
-    <li><a href="finanzas.html">💰 Finanzas</a></li>
-    <li><a href="proveedores.html">🚚 Proveedores</a></li>
-    <li><a href="ventas.html">🧾 Ventas</a></li>
-    <li><a href="reportesGraficos.html">📊 Reportes</a></li>
-  </ul>
-</nav>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <ul id="navMenu">
+      <li><a href="index.html">🏠 Inicio</a></li>
+      <li><a href="inventario.html">🧃 Inventario</a></li>
+      <li><a href="pedidos.html">📦 Pedidos</a></li>
+      <li><a href="clientes.html">👥 Clientes</a></li>
+      <li><a href="finanzas.html">💰 Finanzas</a></li>
+      <li><a href="proveedores.html">🚚 Proveedores</a></li>
+      <li><a href="ventas.html">🧾 Ventas</a></li>
+      <li><a href="reportesGraficos.html">📊 Reportes</a></li>
+    </ul>
+  </nav>
 
   <main>
     <section class="kpi-box">
@@ -57,26 +59,27 @@
   </main>
 
   <script src="js/script.js"></script>
+  <!-- <script src="js/noa.js"></script> <!-- Asistente Noa -->
 
-    <script>
-      function toggleMenu() {
+  <script>
+    function toggleMenu() {
       document.getElementById("navMenu").classList.toggle("open");
-  }
-    </script>
+    }
 
-    <script>
-  if (sessionStorage.getItem("sesionIniciada") !== "true") {
-    window.location.href = "login.html";
-  }
-</script>
+    if (sessionStorage.getItem("sesionIniciada") !== "true") {
+      window.location.href = "login.html";
+    }
 
-<button onclick="cerrarSesion()">Cerrar sesión</button>
+    function cerrarSesion() {
+      sessionStorage.removeItem("sesionIniciada");
+      window.location.href = "login.html";
+    }
+  </script>
 
-<script>
-  function cerrarSesion() {
-    sessionStorage.removeItem("sesionIniciada");
-    window.location.href = "login.html";
-  }
-</script>
+  <div id="button" class="button-sesion">
+
+    <button onclick="cerrarSesion()">Cerrar sesión</button>
+
+  </div>
 </body>
 </html>
