@@ -122,14 +122,38 @@ function mostrarMovimientos() {
 
 function mostrarResumenFinanciero() {
   const ingresos = movimientos.reduce((acc, mov) => mov.tipo === "Ingreso" ? acc + mov.monto : acc, 0);
-  const gastos = movimientos.reduce((acc, mov) => mov.tipo === "Gasto" ? acc + mov.monto : acc, 0);
-  const ganancia = ingresos - gastos;
+
+  // Gastos manuales
+  let gastosManuales = movimientos.reduce((acc, mov) => mov.tipo === "Gasto" ? acc + mov.monto : acc, 0);
+
+  // Gastos del inventario
+  const productos = JSON.parse(localStorage.getItem("productos")) || [];
+  const gastoInventario = productos.reduce((acc, prod) => acc + (parseFloat(prod.costo) || 0), 0);
+
+  // Ganancia potencial: precio - costo de productos
+  let gananciaPotencial = productos.reduce((acc, prod) => {
+  const precio = parseFloat(prod.precio) || 0;
+  const costo = parseFloat(prod.costo) || 0;
+  return acc + (precio - costo);
+  }, 0);
+
+
+  // Suma total de gastos visibles + invisibles
+  const gastosTotales = gastosManuales + gastoInventario;
+
+  const ganancia = ingresos - gastosTotales;
 
   totalIngresosElem.textContent = ingresos.toFixed(2);
-  totalGastosElem.textContent = gastos.toFixed(2);
+  totalGastosElem.textContent = gastosTotales.toFixed(2);
   gananciaTotalElem.textContent = ganancia.toFixed(2);
   balanceTotalElem.textContent = `Balance total: $${ganancia.toFixed(2)}`;
+  
+  // NUEVAS LÍNEA AÑADIDAS (13/05/2025) PARA PRECIOS
+  const gananciaPotencialElem = document.getElementById("gananciaPotencial");
+  gananciaPotencialElem.textContent = gananciaPotencial.toFixed(2);
 
+
+  // Mostrar movimiento más alto
   if (movimientos.length === 0) {
     movimientoMayorElem.textContent = "-";
   } else {
@@ -137,7 +161,15 @@ function mostrarResumenFinanciero() {
     movimientoMayorElem.textContent = `${mayor.tipo} - $${mayor.monto.toFixed(2)} (${mayor.descripcion})`;
   }
 
-  actualizarGrafico(ingresos, gastos);
+  // Mostrar explicación extra si hay costos desde inventario
+  const gastoExtraExplicacion = document.getElementById("gastoExtraExplicacion");
+  if (gastoInventario > 0) {
+    gastoExtraExplicacion.textContent = `Incluye $${gastoInventario.toFixed(2)} de costos del inventario`;
+  } else {
+    gastoExtraExplicacion.textContent = "";
+  }
+
+  actualizarGrafico(ingresos, gastosTotales);
 }
 
 function actualizarGrafico(ingresos, gastos) {
