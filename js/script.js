@@ -27,8 +27,9 @@ function cargarDashboard() {
   let totalSemana = 0;
 
   ventas.forEach((venta) => {
-    if (venta.fecha === hoy) totalHoy += venta.monto;
-    if (venta.fecha >= fecha7dias) totalSemana += venta.monto;
+  const monto = parseFloat(venta.monto ?? venta.ingreso) || 0;
+  if (venta.fecha === hoy) totalHoy += monto;
+  if (venta.fecha >= fecha7dias) totalSemana += monto;
   });
 
   document.getElementById("ventasHoy").textContent = totalHoy;
