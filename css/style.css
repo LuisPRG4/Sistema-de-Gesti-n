@@ -22,7 +22,6 @@ header h1 {
   font-size: 2rem;
   color: #5b2d90;
   margin-bottom: 10px;
-  font-family: Edu NSW ACT Hand Pre;
 }
 
 .header-container {
@@ -32,7 +31,7 @@ header h1 {
   justify-content: flex-start;
   max-width: 800px;
   margin: 0 0 20px 0; /* o simplemente margin-bottom: 20px; */
-
+  font-family: Edu NSW ACT Hand Pre;
 }
 
 .logo {
