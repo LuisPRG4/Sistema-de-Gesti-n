@@ -45,7 +45,7 @@ function cargarDashboard() {
   const alertaStock = document.getElementById("alertasStock");
   alertaStock.innerHTML = "";
   productos.forEach((p) => {
-    if (p.stock <= 5) {
+    if (p.stock <= 0) {
       let li = document.createElement("li");
       li.textContent = `${p.nombre} - Stock: ${p.stock}`;
       alertaStock.appendChild(li);
