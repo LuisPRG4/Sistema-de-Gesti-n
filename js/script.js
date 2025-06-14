@@ -32,15 +32,24 @@ function cargarDashboard() {
   if (venta.fecha >= fecha7dias) totalSemana += monto;
   });
 
+
   document.getElementById("ventasHoy").textContent = totalHoy;
   document.getElementById("ventasSemana").textContent = totalSemana;
 
   if (productos.length > 0) {
-    let top = productos.reduce((a, b) => (a.vendidos > b.vendidos ? a : b));
+  // Filtramos solo los productos con vendidos > 0
+  const productosConVentas = productos.filter(p => p.vendidos > 0);
+
+  if (productosConVentas.length > 0) {
+    let top = productosConVentas.reduce((a, b) => (a.vendidos > b.vendidos ? a : b));
     document.getElementById("productoTop").textContent = top.nombre;
   } else {
     document.getElementById("productoTop").textContent = "-";
   }
+} else {
+  document.getElementById("productoTop").textContent = "-";
+}
+
 
   // Alertas de stock
   const alertaStock = document.getElementById("alertasStock");
