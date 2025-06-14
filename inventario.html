@@ -6,11 +6,9 @@
   <title>Los SS - Inventario</title>
   <link rel="icon" type="image/png" href="fav/los ss.png">
 
-  <!--TIPOGRAFÍAS IMPORTADAS-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Damion&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -42,7 +40,14 @@
       <input type="text" id="nombre" placeholder="Nombre del producto" />
         <label>Ingresa el stock:</label>
       <input type="number" id="stock" placeholder="Stock" />
-        <label>Vendidos hasta ahora:</label>
+
+        <label>Stock mínimo (opcional):</label>
+      <input type="number" id="stockMin" placeholder="Mínimo permitido" />
+
+        <label>Stock máximo (opcional):</label>
+      <input type="number" id="stockMax" placeholder="Máximo permitido" />
+
+        <label>Vendidos:</label>
       <input type="number" id="vendidos" placeholder="Vendidos" />
         <label>Ingresa el costo del producto:</label>
       <input type="number" id="costo" placeholder="Costo ($)" step="0.01" />
