@@ -19,7 +19,7 @@ header {
 }
 
 header h1 {
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #5b2d90;
   margin-bottom: 10px;
   font-family: "Handlee", cursive !important;
@@ -32,11 +32,7 @@ header h1 {
   justify-content: flex-start;
   max-width: 800px;
   margin: 0 0 20px 0; /* o simplemente margin-bottom: 20px; */
-  font-family: Edu NSW ACT Hand Pre;
-}
 
-.header-container h1{
-  font-family: "Edu NSW ACT Hand Pre";
 }
 
 .logo {
@@ -44,7 +40,6 @@ header h1 {
   height: auto;
   border-radius: 8px;
 }
-
 
 /* Ajuste para dispositivos móviles */
 @media (max-width: 768px) {
@@ -56,12 +51,12 @@ header h1 {
 
   header h1 {
     font-size: 1.5rem;
-    font-family: "Damion", cursive !important;
   }
 
   header .logo {
-    width: 80px;
+    width: 100px;
   }
+
 }
 
 /* Navegación */
@@ -226,8 +221,9 @@ nav a:hover {
     padding: 10px;
   }
 
+  /* Cambio de tamaño aplicado 14/06/2025 */
   header h1 {
-    font-size: 1.5rem;
+    font-size: 3.0rem;
   }
 
   nav ul {
@@ -566,4 +562,16 @@ label {
 
 .movimiento-item button.btn-eliminar:hover {
   background-color: #b2302b;
+}
+
+.button-sesion button{
+  display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 10px auto;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    position: relative;
 }
