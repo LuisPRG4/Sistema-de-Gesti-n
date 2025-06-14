@@ -1,3 +1,5 @@
+let graficos = {};
+
 document.addEventListener("DOMContentLoaded", () => {
   generarGraficoTipoPago();
   generarGraficoPorProducto();
@@ -8,19 +10,29 @@ function obtenerVentas() {
   return JSON.parse(localStorage.getItem("ventas")) || [];
 }
 
+// NUEVA FUNCIÓN PARA CAMBIAR OBTENER LOS GRÁFICOS DE BARRAS (14/06/2025):
+function obtenerTipoGraficoSeleccionado() {
+  return document.getElementById("tipoGrafico")?.value || "pie";
+}
+
+
 // 🎂 Tipo de pago
-function generarGraficoTipoPago() {
-  const ventas = obtenerVentas();
+function generarGraficoTipoPago(ventas = obtenerVentas()) {
+  // ventas ya viene filtrada si se pasa, o usa todas si no
   const tipos = { contado: 0, credito: 0 };
-
   ventas.forEach(v => {
-  if (v.tipoPago === "contado") tipos.contado++;
-  else if (v.tipoPago === "credito") tipos.credito++;
-});
+    if (v.tipoPago === "contado") tipos.contado++;
+    else if (v.tipoPago === "credito") tipos.credito++;
+  });
 
-  const ctx = document.getElementById("graficoTipoPago").getContext("2d");
-  new Chart(ctx, {
-    type: "pie",
+  const tipo = obtenerTipoGraficoSeleccionado();
+  const ctx = document.getElementById("graficoTipoPago").getContext("2d"); // en función de tipoPago
+
+
+  if (graficos["tipoPago"]) graficos["tipoPago"].destroy();
+  graficos["tipoPago"] = new Chart(ctx, {
+  type: tipo,
+
     data: {
       labels: ["Contado", "Crédito"],
       datasets: [{
@@ -32,17 +44,20 @@ function generarGraficoTipoPago() {
 }
 
 // 🍹 Por producto
-function generarGraficoPorProducto() {
-  const ventas = obtenerVentas();
+function generarGraficoPorProducto(ventas = obtenerVentas()) {
   const conteo = {};
-
   ventas.forEach(v => {
     conteo[v.producto] = (conteo[v.producto] || 0) + 1;
   });
 
-  const ctx = document.getElementById("graficoProducto").getContext("2d");
-  new Chart(ctx, {
-    type: "pie",
+  const tipo = obtenerTipoGraficoSeleccionado();
+  const ctx = document.getElementById("graficoProducto").getContext("2d"); // en función de producto
+
+
+  if (graficos["producto"]) graficos["producto"].destroy();
+  graficos["producto"] = new Chart(ctx, {
+  type: tipo,
+
     data: {
       labels: Object.keys(conteo),
       datasets: [{
@@ -54,17 +69,19 @@ function generarGraficoPorProducto() {
 }
 
 // 👤 Por cliente
-function generarGraficoPorCliente() {
-  const ventas = obtenerVentas();
+function generarGraficoPorCliente(ventas = obtenerVentas()) {
   const conteo = {};
-
   ventas.forEach(v => {
     conteo[v.cliente] = (conteo[v.cliente] || 0) + 1;
   });
 
-  const ctx = document.getElementById("graficoCliente").getContext("2d");
-  new Chart(ctx, {
-    type: "pie",
+  const tipo = obtenerTipoGraficoSeleccionado();
+  const ctx = document.getElementById("graficoCliente").getContext("2d"); // en función de cliente
+
+  if (graficos["cliente"]) graficos["cliente"].destroy();
+  graficos["cliente"] = new Chart(ctx, {
+  type: tipo,
+
     data: {
       labels: Object.keys(conteo),
       datasets: [{
@@ -115,4 +132,42 @@ function exportarVentasExcel() {
   XLSX.utils.book_append_sheet(wb, ws, "Ventas");
 
   XLSX.writeFile(wb, "ventas.xlsx");
+}
+
+//NUEVA FUNCIÓN PARA FILTRAR POR RANGO DE FECHAS (14/06/2025):
+function aplicarFiltroFechas() {
+  const desde = document.getElementById("fechaInicio").value;
+  const hasta = document.getElementById("fechaFin").value;
+
+  if (!desde || !hasta) {
+    alert("Selecciona ambas fechas.");
+    return;
+  }
+
+  const ventasFiltradas = obtenerVentas().filter(v => {
+    const fecha = v.fecha || v.fechaVenta; // por compatibilidad
+    return fecha >= desde && fecha <= hasta;
+  });
+
+  // Limpiar y volver a dibujar todos los gráficos con ventas filtradas
+  generarGraficoTipoPago(ventasFiltradas);
+  generarGraficoPorProducto(ventasFiltradas);
+  generarGraficoPorCliente(ventasFiltradas);
+}
+
+function actualizarTodosLosGraficos() {
+  const desde = document.getElementById("fechaInicio").value;
+  const hasta = document.getElementById("fechaFin").value;
+  let ventas = obtenerVentas();
+
+  if (desde && hasta) {
+    ventas = ventas.filter(v => {
+      const fecha = v.fecha || v.fechaVenta;
+      return fecha >= desde && fecha <= hasta;
+    });
+  }
+
+  generarGraficoTipoPago(ventas);
+  generarGraficoPorProducto(ventas);
+  generarGraficoPorCliente(ventas);
 }
