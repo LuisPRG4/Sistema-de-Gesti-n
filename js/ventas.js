@@ -1,3 +1,5 @@
+// ventas.js corregido y mejorado por mami 💜
+
 const clientes = JSON.parse(localStorage.getItem("clientes")) || []; 
 let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
@@ -6,6 +8,11 @@ let productosVenta = [];
 
 function guardarVentas() {
   localStorage.setItem("ventas", JSON.stringify(ventas));
+
+  // 🟣 Actualiza los gráficos si estás en la página de reportes
+  if (location.href.includes("reportesGraficos.html")) {
+    actualizarTodosLosGraficos();
+  }
 }
 
 function cargarClientes() {
@@ -121,6 +128,7 @@ function registrarVenta() {
   limpiarFormulario();
 }
 
+//Actualizada
 function mostrarVentas(filtradas = ventas) {
   const lista = document.getElementById("listaVentas");
   lista.innerHTML = "";
@@ -130,47 +138,106 @@ function mostrarVentas(filtradas = ventas) {
     return;
   }
 
+  const grupoContado = {};
+  const grupoCredito = [];
+
   filtradas.forEach((venta, index) => {
-    const productosTexto = venta.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", ");
-
-    const detallePago =
-      venta.tipoPago === "contado"
-        ? `<span class="text-sm text-gray-600">Método: ${venta.detallePago.metodo}</span>`
-        : `<span class="text-sm text-gray-600">Acreedor: ${venta.detallePago.acreedor || "N/A"}<br>Vence: ${venta.detallePago.fechaVencimiento || "Sin fecha"}</span>`;
-
-    const card = document.createElement("div");
-    card.className = "bg-white border border-purple-200 rounded-2xl p-4 shadow-md";
-
-    card.innerHTML = `
-      <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-semibold text-purple-700">${venta.cliente}</h3>
-        <span class="text-sm text-gray-500">${venta.fecha}</span>
-      </div>
-      <p class="text-sm text-gray-800"><strong>Productos:</strong> ${productosTexto}</p>
-      <p class="text-sm text-gray-800"><strong>Total:</strong> $${venta.ingreso.toFixed(2)}</p>
-      <p class="text-sm text-gray-800"><strong>Pago:</strong> ${venta.tipoPago}</p>
-      ${detallePago}
-      <div class="mt-3 flex gap-2">
-        <button onclick="cargarVenta(${index})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md text-sm transition">✏️ Editar</button>
-        <button onclick="revertirVenta(${index})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition">↩️ Revertir</button>
-        <button onclick="eliminarVenta(${index})" class="bg-gray-500 hover:bg-gray-700 text-white px-3 py-1 rounded-md text-sm transition">🗑 Eliminar</button>
-      </div>
-    `;
-
-    lista.appendChild(card);
+    if (venta.tipoPago === "contado") {
+      const metodo = venta.detallePago.metodo || "Otro";
+      if (!grupoContado[metodo]) grupoContado[metodo] = [];
+      grupoContado[metodo].push({ venta, index });
+    } else {
+      grupoCredito.push({ venta, index });
+    }
   });
+
+  // Categoría: Contado
+  if (Object.keys(grupoContado).length > 0) {
+    const titulo = document.createElement("h2");
+    titulo.textContent = "🟣 Ventas al Contado";
+    titulo.className = "text-lg font-bold text-purple-700 mt-4";
+    lista.appendChild(titulo);
+
+    for (const metodo in grupoContado) {
+      const subtitulo = document.createElement("h3");
+      subtitulo.textContent = `💠 Método: ${metodo}`;
+      subtitulo.className = "text-md font-semibold text-purple-600 mt-3";
+      lista.appendChild(subtitulo);
+
+      grupoContado[metodo].forEach(({ venta, index }) => {
+        const card = crearCardVenta(venta, index);
+        lista.appendChild(card);
+      });
+    }
+  }
+
+  // Categoría: Crédito
+  if (grupoCredito.length > 0) {
+    const titulo = document.createElement("h2");
+    titulo.textContent = "🔵 Ventas a Crédito";
+    titulo.className = "text-lg font-bold text-blue-700 mt-6";
+    lista.appendChild(titulo);
+
+    grupoCredito.forEach(({ venta, index }) => {
+      const card = crearCardVenta(venta, index);
+      lista.appendChild(card);
+    });
+  }
 }
 
+function crearCardVenta(venta, index) {
+  const productosTexto = venta.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", ");
 
+  const detallePago =
+    venta.tipoPago === "contado"
+      ? `<span class="text-sm text-gray-600">Método: ${venta.detallePago.metodo}</span>`
+      : `<span class="text-sm text-gray-600">Acreedor: ${venta.detallePago.acreedor || "N/A"}<br>Vence: ${venta.detallePago.fechaVencimiento || "Sin fecha"}</span>`;
+
+  const card = document.createElement("div");
+  card.className = "bg-white border border-purple-200 rounded-2xl p-4 shadow-md mt-2";
+
+  card.innerHTML = `
+    <div class="flex justify-between items-center mb-2">
+      <h3 class="text-lg font-semibold text-purple-700">${venta.cliente}</h3>
+      <span class="text-sm text-gray-500">${venta.fecha}</span>
+    </div>
+    <p class="text-sm text-gray-800"><strong>Productos:</strong> ${productosTexto}</p>
+    <p class="text-sm text-gray-800"><strong>Total:</strong> $${venta.ingreso.toFixed(2)}</p>
+    <p class="text-sm text-gray-800"><strong>Pago:</strong> ${venta.tipoPago}</p>
+    ${detallePago}
+    <div class="mt-3 flex gap-2">
+      <button onclick="cargarVenta(${index})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md text-sm transition">✏️ Editar</button>
+      <button onclick="revertirVenta(${index})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition">↩️ Revertir</button>
+      <button onclick="eliminarVenta(${index})" class="bg-gray-500 hover:bg-gray-700 text-white px-3 py-1 rounded-md text-sm transition">🗑 Eliminar</button>
+    </div>
+  `;
+
+  return card;
+}
+
+// Actualizada
 function filtrarVentas() {
-  const filtro = document.getElementById("buscadorVentas").value.toLowerCase();
-  const resultados = ventas.filter(venta =>
-    venta.cliente.toLowerCase().includes(filtro) ||
-    venta.productos.some(p => p.nombre.toLowerCase().includes(filtro)) ||
-    venta.ingreso.toString().includes(filtro) ||
-    venta.tipoPago.toLowerCase().includes(filtro)
-  );
-  mostrarVentas(resultados);
+  const input = document.getElementById("buscadorVentas").value.toLowerCase().trim();
+
+  const filtradas = ventas.filter(v => {
+    const productos = v.productos.map(p => p.nombre.toLowerCase()).join(" ");
+    const cliente = v.cliente.toLowerCase();
+    const fecha = v.fecha.toLowerCase();
+    const metodo = (v.detallePago.metodo || "").toLowerCase();
+    const acreedor = (v.detallePago.acreedor || "").toLowerCase();
+
+    return (
+      cliente.includes(input) ||
+      fecha.includes(input) ||
+      productos.includes(input) ||
+      metodo.includes(input) ||
+      acreedor.includes(input) ||
+      v.ingreso.toString().includes(input) ||
+      v.tipoPago.toLowerCase().includes(input)
+    );
+  });
+
+  mostrarVentas(filtradas);
 }
 
 function limpiarFormulario() {
