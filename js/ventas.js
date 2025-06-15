@@ -1,5 +1,4 @@
 // ventas.js corregido y mejorado por mami 💜
-
 const clientes = JSON.parse(localStorage.getItem("clientes")) || []; 
 let ventas = JSON.parse(localStorage.getItem("ventas")) || [];
 let productos = JSON.parse(localStorage.getItem("productos")) || [];
@@ -33,35 +32,35 @@ function mostrarOpcionesPago() {
 }
 
 function registrarVenta() {
-  const cliente = document.getElementById("clienteVenta").value.trim();
-  const tipoPago = document.getElementById("tipoPago").value;
+   const cliente = document.getElementById("clienteVenta").value.trim();
+   const tipoPago = document.getElementById("tipoPago").value;
 
-  if (!cliente || productosVenta.length === 0 || !tipoPago) {
+   if (!cliente || productosVenta.length === 0 || !tipoPago) {
     alert("Completa todos los campos principales y agrega productos.");
     return;
-  }
+   }
 
-  let detallePago = {};
+   let detallePago = {};
 
-  if (tipoPago === "contado") {
+   if (tipoPago === "contado") {
     const metodo = document.getElementById("metodoContado").value;
     if (!metodo) {
       alert("Selecciona el método de pago.");
       return;
     }
     detallePago = { metodo };
-  } else if (tipoPago === "credito") {
+   } else if (tipoPago === "credito") {
     const fechaVencimiento = document.getElementById("fechaVencimiento").value || "No especificada";
     detallePago = { acreedor: cliente, fechaVencimiento };
-  }
+   }
 
-  let ingreso = 0;
-  let ganancia = 0;
+   let ingreso = 0;
+   let ganancia = 0;
 
-  productosVenta.forEach(p => {
+   productosVenta.forEach(p => {
     ingreso += p.subtotal;
     ganancia += (p.precio - p.costo) * p.cantidad;
-  });
+   });
 
   const nuevaVenta = {
     cliente,
@@ -71,11 +70,11 @@ function registrarVenta() {
     ingreso,
     ganancia,
     fecha: new Date().toISOString().split("T")[0]
-  };
+   };
 
-  let productosActualizados = [...productos];
+   let productosActualizados = [...productos];
 
-  if (editVentaIndex !== null) {
+   if (editVentaIndex !== null) {
     const ventaAnterior = ventas[editVentaIndex];
     ventaAnterior.productos.forEach(p => {
       const prod = productosActualizados.find(prod => prod.nombre === p.nombre);
@@ -97,7 +96,7 @@ function registrarVenta() {
     mostrarToast("Venta actualizada ✅");
     editVentaIndex = null;
     document.getElementById("btnRegistrarVenta").textContent = "Registrar Venta";
-  } else {
+   } else {
     ventas.push(nuevaVenta);
 
     productosVenta.forEach(p => {
@@ -109,13 +108,24 @@ function registrarVenta() {
     });
 
     const movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
+    
+    // Registrar ingreso total
     movimientos.push({
-      tipo: "ingreso",
-      monto: ingreso,
-      ganancia,
-      fecha: nuevaVenta.fecha,
-      descripcion: `Venta a ${cliente}`
+    tipo: "ingreso",
+    monto: ingreso,
+    fecha: nuevaVenta.fecha,
+    descripcion: `Venta a ${cliente}`
     });
+
+    // Registrar costo total como gasto
+    const costoTotal = productosVenta.reduce((total, p) => total + (p.costo * p.cantidad), 0);
+    movimientos.push({
+    tipo: "gasto",
+    monto: costoTotal,
+    fecha: nuevaVenta.fecha,
+    descripcion: `Costo de venta a ${cliente}`
+    });
+
     localStorage.setItem("movimientos", JSON.stringify(movimientos));
 
     mostrarToast("Venta registrada con éxito ✅");
