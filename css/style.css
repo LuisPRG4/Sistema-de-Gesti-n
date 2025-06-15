@@ -64,7 +64,7 @@ nav {
   background-color: #f1e4ff;
   padding: 10px;
   margin-bottom: 20px;
-  border-radius: 40px;
+  border-radius: 15px;
   text-align: center;
 }
 
@@ -93,7 +93,6 @@ nav a:hover {
   background-color: #e6d3ff;
   color: #3d1d70;
 }
-
 
 /* Secciones */
 main section {
@@ -144,7 +143,7 @@ ul li {
   background-color: #f9f9f9;
   margin: 10px auto;
   padding: 15px;
-  border-radius: 10px;
+  border-radius: 15px;
   border: 1px solid #ddd;
   max-width: 500px;
   position: relative;
@@ -166,7 +165,6 @@ ul li button {
 ul li button:hover {
   background-color: #c0392b;
 }
-
 
 nav {
   padding: 10px;
@@ -223,7 +221,7 @@ nav a:hover {
 
   /* Cambio de tamaño aplicado 14/06/2025 */
   header h1 {
-    font-size: 1.7rem;
+    font-size: 2rem;
   }
 
   nav ul {
@@ -589,4 +587,75 @@ label {
   .btn-cancelar {
     width: auto;
   }
+}
+
+.especial-dia-padre {
+  background: linear-gradient(135deg, #e2d4f7, #f5e8ff);
+  padding: 25px 15px;
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgba(91, 45, 144, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.especial-dia-padre::before,
+.especial-dia-padre::after {
+  content: "🎁";
+  position: absolute;
+  font-size: 2rem;
+  animation: flotar 3s ease-in-out infinite;
+  opacity: 0.2;
+}
+
+.especial-dia-padre::before {
+  top: 10px;
+  left: 10px;
+}
+
+.especial-dia-padre::after {
+  bottom: 10px;
+  right: 10px;
+  content: "👔";
+}
+
+@keyframes flotar {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+.titulo-dia-padre {
+  font-family: 'Handlee', cursive;
+  font-size: 2rem;
+  color: #5b2d90;
+  margin: 0;
+  animation: entradaTitulo 1s ease;
+}
+
+@keyframes entradaTitulo {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mensaje-padre {
+  color: #6936b3;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 600;
+  margin-top: 4px;
+  animation: desvanecer 2s ease;
+}
+
+@keyframes desvanecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.anim-heartbeat {
+  animation: latir 1.5s infinite;
+}
+
+@keyframes latir {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
 }
