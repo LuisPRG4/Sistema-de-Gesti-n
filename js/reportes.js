@@ -158,6 +158,8 @@ function aplicarFiltroFechas() {
 function actualizarTodosLosGraficos() {
   const desde = document.getElementById("fechaInicio").value;
   const hasta = document.getElementById("fechaFin").value;
+  const tipoAgrupacion = document.getElementById("tipoAgrupacion").value;
+
   let ventas = obtenerVentas();
 
   if (desde && hasta) {
@@ -165,6 +167,12 @@ function actualizarTodosLosGraficos() {
       const fecha = v.fecha || v.fechaVenta;
       return fecha >= desde && fecha <= hasta;
     });
+  }
+
+  if (tipoAgrupacion === "semana") {
+    ventas = agruparVentasPor(ventas, "semana");
+  } else if (tipoAgrupacion === "mes") {
+    ventas = agruparVentasPor(ventas, "mes");
   }
 
   generarGraficoTipoPago(ventas);
