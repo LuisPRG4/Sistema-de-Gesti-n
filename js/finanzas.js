@@ -121,39 +121,49 @@ function mostrarMovimientos() {
 }
 
 function mostrarResumenFinanciero() {
-  const ingresos = movimientos.reduce((acc, mov) => mov.tipo === "Ingreso" ? acc + mov.monto : acc, 0);
+  let ingresos = 0;
+  let gastosManuales = 0;
+  let gastosPorVenta = 0;
 
-  // Gastos manuales
-  let gastosManuales = movimientos.reduce((acc, mov) => mov.tipo === "Gasto" ? acc + mov.monto : acc, 0);
+  movimientos.forEach(mov => {
+    const tipo = mov.tipo.toLowerCase();
+    if (tipo === "ingreso") ingresos += mov.monto;
+    else if (tipo === "gasto") {
+      const desc = (mov.descripcion || "").toLowerCase();
+      if (desc.includes("costo de venta")) {
+        gastosPorVenta += mov.monto;
+      } else {
+        gastosManuales += mov.monto;
+      }
+    }
+  });
 
-  // Gastos del inventario
+  // Gastos por inventario (iniciales)
   const productos = JSON.parse(localStorage.getItem("productos")) || [];
   const gastoInventario = productos.reduce((acc, prod) => acc + (parseFloat(prod.costo) || 0), 0);
 
-  // Ganancia potencial: precio - costo de productos
-  let gananciaPotencial = productos.reduce((acc, prod) => {
-  const precio = parseFloat(prod.precio) || 0;
-  const costo = parseFloat(prod.costo) || 0;
-  return acc + (precio - costo);
-  }, 0);
+  // Suma total de gastos
+  const gastosTotales = gastosManuales + gastosPorVenta + gastoInventario;
 
-
-  // Suma total de gastos visibles + invisibles
-  const gastosTotales = gastosManuales + gastoInventario;
-
+  // Ganancia real
   const ganancia = ingresos - gastosTotales;
 
+  // Mostrar en la interfaz
   totalIngresosElem.textContent = ingresos.toFixed(2);
   totalGastosElem.textContent = gastosTotales.toFixed(2);
   gananciaTotalElem.textContent = ganancia.toFixed(2);
   balanceTotalElem.textContent = `Balance total: $${ganancia.toFixed(2)}`;
-  
-  // NUEVAS LÍNEA AÑADIDAS (13/05/2025) PARA PRECIOS
+
+  // Ganancia potencial (precio - costo por producto)
+  const gananciaPotencial = productos.reduce((acc, prod) => {
+    const precio = parseFloat(prod.precio) || 0;
+    const costo = parseFloat(prod.costo) || 0;
+    return acc + (precio - costo);
+  }, 0);
   const gananciaPotencialElem = document.getElementById("gananciaPotencial");
   gananciaPotencialElem.textContent = gananciaPotencial.toFixed(2);
 
-
-  // Mostrar movimiento más alto
+  // Movimiento más alto
   if (movimientos.length === 0) {
     movimientoMayorElem.textContent = "-";
   } else {
@@ -161,16 +171,22 @@ function mostrarResumenFinanciero() {
     movimientoMayorElem.textContent = `${mayor.tipo} - $${mayor.monto.toFixed(2)} (${mayor.descripcion})`;
   }
 
-  // Mostrar explicación extra si hay costos desde inventario
+  // Mostrar explicación adicional si hay gastos por venta o inventario
   const gastoExtraExplicacion = document.getElementById("gastoExtraExplicacion");
-  if (gastoInventario > 0) {
-    gastoExtraExplicacion.textContent = `Incluye $${gastoInventario.toFixed(2)} de costos del inventario`;
-  } else {
-    gastoExtraExplicacion.textContent = "";
-  }
+  let explicacion = [];
 
+  if (gastosPorVenta > 0) explicacion.push(`$${gastosPorVenta.toFixed(2)} por costo de ventas`);
+  if (gastoInventario > 0) explicacion.push(`$${gastoInventario.toFixed(2)} por inventario`);
+
+  gastoExtraExplicacion.textContent = explicacion.length > 0
+    ? "Incluye " + explicacion.join(" y ")
+    : "";
+
+  // Actualizar gráfico
   actualizarGrafico(ingresos, gastosTotales);
 }
+
+
 
 function actualizarGrafico(ingresos, gastos) {
   const ctx = document.getElementById("graficoFinanzas").getContext("2d");
