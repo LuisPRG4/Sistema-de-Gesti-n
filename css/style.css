@@ -492,15 +492,6 @@ label {
   background-color: #c0392b;
 }
 
-/* PROVEEDORES */
-
-
-
-/* VENTAS */
-
-
-
-
 /* FINANZAS */
 /* Contenedor de cada movimiento tipo tarjeta */
 .movimiento-item {
@@ -574,4 +565,28 @@ label {
     border: 1px solid #ccc;
     font-size: 1rem;
     position: relative;
+}
+
+.btn-cancelar {
+  margin-top: 0.5rem;
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: block;
+  width: 100%;
+}
+
+.btn-cancelar:hover {
+  background-color: #c53030;
+}
+
+@media (min-width: 600px) {
+  .btn-cancelar {
+    width: auto;
+  }
 }
