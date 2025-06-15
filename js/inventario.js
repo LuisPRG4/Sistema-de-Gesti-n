@@ -118,10 +118,11 @@ function cargarProducto(index) {
   editIndex = index;
   document.getElementById("btnGuardar").textContent = "Actualizar";
 
-   //Nueva función 14/06/2025 para hacer scroll hacia los campos:
-  // 💜 Desplazar al formulario automáticamente:
-  document.getElementById("nombre").scrollIntoView({ behavior: "smooth", block: "start" });
+  // 💜 Mostrar botón cancelar y hacer scroll al inicio
+  document.getElementById("btnCancelar").style.display = "inline-block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
 
 function eliminarProducto(index) {
   if (confirm("¿Eliminar este producto?")) {
@@ -148,6 +149,9 @@ function limpiarCampos() {
   const preview = document.getElementById("imagenPreview");
   preview.src = "";
   preview.style.display = "none";
+
+  //NUEVA FUNCIÓN PARA CANCELAR EDICIÓN DE UN PRODUCTO:
+  document.getElementById("btnCancelar").style.display = "none";
 }
 
 function mostrarToast(mensaje) {
@@ -180,6 +184,13 @@ function cargarProveedores() {
     option.textContent = p.nombre;
     select.appendChild(option);
   });
+}
+
+//NUEVA FUNCIÓN PARA CANCELAR LA EDICIÓN DE UN PRODUCTO:
+function cancelarEdicion() {
+  limpiarCampos();
+  mostrarToast("Edición cancelada ❌");
+  document.getElementById("btnCancelar").style.display = "none";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
