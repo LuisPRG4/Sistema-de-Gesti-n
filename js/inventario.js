@@ -117,6 +117,10 @@ function cargarProducto(index) {
 
   editIndex = index;
   document.getElementById("btnGuardar").textContent = "Actualizar";
+
+   //Nueva función 14/06/2025 para hacer scroll hacia los campos:
+  // 💜 Desplazar al formulario automáticamente:
+  document.getElementById("nombre").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function eliminarProducto(index) {
