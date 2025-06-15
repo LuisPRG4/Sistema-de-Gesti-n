@@ -50,7 +50,7 @@ header h1 {
   }
 
   header h1 {
-    font-size: 0.7rem;
+    font-size: 1rem;
   }
 
   header .logo {
@@ -589,6 +589,7 @@ label {
   }
 }
 
+/* PARA EL DÍA DEL PADRE EN EL HEADAER */
 .especial-dia-padre {
   background: linear-gradient(135deg, #e2d4f7, #f5e8ff);
   padding: 25px 15px;
@@ -626,7 +627,7 @@ label {
 
 .titulo-dia-padre {
   font-family: 'Handlee', cursive;
-  font-size: 2rem;
+  font-size: 1.3rem;
   color: #5b2d90;
   margin: 0;
   animation: entradaTitulo 1s ease;
