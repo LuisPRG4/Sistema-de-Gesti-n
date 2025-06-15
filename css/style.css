@@ -603,7 +603,7 @@ label {
 .especial-dia-padre::after {
   content: "🎁";
   position: absolute;
-  font-size: 2rem;
+  font-size: 1.3rem;
   animation: flotar 3s ease-in-out infinite;
   opacity: 0.2;
 }
@@ -627,7 +627,7 @@ label {
 
 .titulo-dia-padre {
   font-family: 'Handlee', cursive;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   color: #5b2d90;
   margin: 0;
   animation: entradaTitulo 1s ease;
