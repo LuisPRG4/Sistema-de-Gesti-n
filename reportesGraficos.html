@@ -60,6 +60,16 @@
       </section>
 
       <section>
+          <label for="tipoAgrupacion">📆 Agrupar por:</label>
+        <select id="tipoAgrupacion" onchange="actualizarTodosLosGraficos()">
+          <option value="ninguno">Sin agrupación</option>
+          <option value="semana">Semana</option>
+          <option value="mes">Mes</option>
+        </select>
+      </section>
+
+
+      <section>
         <h2>📈 Tipo de Pago</h2>
         <canvas id="graficoTipoPago" width="400" height="400"></canvas>
       </section>
