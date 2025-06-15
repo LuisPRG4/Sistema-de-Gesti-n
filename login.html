@@ -5,50 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Sistema de Ventas</title>
   <link rel="icon" type="image/png" href="fav/los ss.png">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Damion&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <style>
     body {
       margin: 0;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: #f4f4f8;
+      background: linear-gradient(135deg, #ece9f4, #f9f5ff);
     }
 
     main {
       background: white;
       padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
       width: 100%;
       max-width: 400px;
+      text-align: center;
+      animation: fadeIn 0.8s ease-out;
     }
 
-    section {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+    h1 {
+      color: #5b2d90;
+      font-size: 2rem;
+      margin-bottom: 0.2rem;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #333;
+      font-weight: normal;
+      font-size: 1.2rem;
     }
 
     input {
+      width: 100%;
       padding: 0.75rem;
       border: 1px solid #ccc;
-      border-radius: 0.5rem;
+      border-radius: 0.75rem;
+      margin-top: 0.75rem;
       font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #5b2d90;
+      box-shadow: 0 0 0 3px rgba(91, 45, 144, 0.2);
     }
 
     button {
+      margin-top: 1rem;
+      width: 100%;
       padding: 0.75rem;
       background: #5b2d90;
       color: white;
       border: none;
-      border-radius: 0.5rem;
+      border-radius: 0.75rem;
       font-size: 1rem;
       cursor: pointer;
       transition: background 0.3s ease;
@@ -61,7 +77,12 @@
     #error {
       color: red;
       font-size: 0.9rem;
-      text-align: center;
+      margin-top: 0.8rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 500px) {
@@ -73,21 +94,17 @@
 </head>
 <body>
   <main>
-    <section>
-      <div>
-         <h1 style="text-align:center">Bienvenido</h2>
-      </div>
-      
-      <h2 style="text-align:center">🔐 Iniciar Sesión</h2>
-      <label style="text-align:justify">Ingresa tu usuario:</label>
-      <input type="text" id="usuario" placeholder="Usuario">
-      <label style="text-align:justi">Ingresa tu contraseña:</label>
-      <input type="password" id="contrasena" placeholder="Contraseña">
-      <button onclick="iniciarSesion()">Entrar</button>
-      <p id="error"></p>
-    </section>
+    <h1>Bienvenido</h1>
+    <h2>🔐 Iniciar Sesión</h2>
+    
+    <input type="text" id="usuario" placeholder="Usuario" />
+    <input type="password" id="contrasena" placeholder="Contraseña" />
+    
+    <button onclick="iniciarSesion()">Entrar</button>
+    
+    <p id="error"></p>
   </main>
-  
+
   <script src="js/login.js"></script>
 </body>
 </html>
