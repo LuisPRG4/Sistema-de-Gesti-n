@@ -179,3 +179,53 @@ function actualizarTodosLosGraficos() {
   generarGraficoPorProducto(ventas);
   generarGraficoPorCliente(ventas);
 }
+
+function mostrarVentasCredito() {
+  const ventas = obtenerVentas().filter(v => v.tipoPago === "credito");
+  const lista = document.getElementById("listaEspecial");
+  lista.innerHTML = "";
+
+  if (ventas.length === 0) {
+    lista.innerHTML = "<li>No hay ventas a crédito registradas.</li>";
+    return;
+  }
+
+  ventas.forEach(v => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <strong>${v.cliente}</strong><br>
+      Fecha: ${v.fecha}<br>
+      Productos: ${v.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", ")}<br>
+      Total: $${v.ingreso.toFixed(2)}<br>
+      Vence: ${v.detallePago?.fechaVencimiento || "Sin fecha"}<br>
+    `;
+    lista.appendChild(li);
+  });
+}
+
+function mostrarCobranzas() {
+  const hoy = new Date().toISOString().slice(0, 10);
+  const ventas = obtenerVentas().filter(v =>
+    v.tipoPago === "credito" && v.detallePago?.fechaVencimiento <= hoy
+  );
+
+  const lista = document.getElementById("listaEspecial");
+  lista.innerHTML = "";
+
+  if (ventas.length === 0) {
+    lista.innerHTML = "<li>No hay cobranzas pendientes por vencer o vencidas.</li>";
+    return;
+  }
+
+  ventas.forEach(v => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <strong>${v.cliente}</strong><br>
+      Fecha de Venta: ${v.fecha}<br>
+      Productos: ${v.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", ")}<br>
+      Total: $${v.ingreso.toFixed(2)}<br>
+      Vence: <span style="color:red;">${v.detallePago?.fechaVencimiento || "Sin fecha"}</span><br>
+    `;
+    lista.appendChild(li);
+  });
+}
