@@ -138,23 +138,17 @@ function mostrarResumenFinanciero() {
     }
   });
 
-  // Gastos por inventario (iniciales)
-  const productos = JSON.parse(localStorage.getItem("productos")) || [];
-  const gastoInventario = productos.reduce((acc, prod) => acc + (parseFloat(prod.costo) || 0), 0);
-
-  // Suma total de gastos
-  const gastosTotales = gastosManuales + gastosPorVenta + gastoInventario;
-
-  // Ganancia real
+  // 🚫 Eliminamos gastoInventario del cálculo
+  const gastosTotales = gastosManuales + gastosPorVenta;
   const ganancia = ingresos - gastosTotales;
 
-  // Mostrar en la interfaz
   totalIngresosElem.textContent = ingresos.toFixed(2);
   totalGastosElem.textContent = gastosTotales.toFixed(2);
   gananciaTotalElem.textContent = ganancia.toFixed(2);
   balanceTotalElem.textContent = `Balance total: $${ganancia.toFixed(2)}`;
 
-  // Ganancia potencial (precio - costo por producto)
+  // Ganancia potencial: precio - costo de cada producto
+  const productos = JSON.parse(localStorage.getItem("productos")) || [];
   const gananciaPotencial = productos.reduce((acc, prod) => {
     const precio = parseFloat(prod.precio) || 0;
     const costo = parseFloat(prod.costo) || 0;
@@ -171,22 +165,14 @@ function mostrarResumenFinanciero() {
     movimientoMayorElem.textContent = `${mayor.tipo} - $${mayor.monto.toFixed(2)} (${mayor.descripcion})`;
   }
 
-  // Mostrar explicación adicional si hay gastos por venta o inventario
+  // Mostrar solo si hubo costos de ventas
   const gastoExtraExplicacion = document.getElementById("gastoExtraExplicacion");
-  let explicacion = [];
-
-  if (gastosPorVenta > 0) explicacion.push(`$${gastosPorVenta.toFixed(2)} por costo de ventas`);
-  if (gastoInventario > 0) explicacion.push(`$${gastoInventario.toFixed(2)} por inventario`);
-
-  gastoExtraExplicacion.textContent = explicacion.length > 0
-    ? "Incluye " + explicacion.join(" y ")
+  gastoExtraExplicacion.textContent = gastosPorVenta > 0
+    ? `Incluye $${gastosPorVenta.toFixed(2)} por costo de ventas`
     : "";
 
-  // Actualizar gráfico
   actualizarGrafico(ingresos, gastosTotales);
 }
-
-
 
 function actualizarGrafico(ingresos, gastos) {
   const ctx = document.getElementById("graficoFinanzas").getContext("2d");
